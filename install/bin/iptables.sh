@@ -39,5 +39,4 @@ iptables -A OUTPUT  -j ACCEPT
 iptables -A FORWARD -j DROP
 
 
-# iptables-save > /etc/iptables/rules.v4
-/etc/init.d/iptables save
+iptables-save > /etc/iptables/rules.v4
