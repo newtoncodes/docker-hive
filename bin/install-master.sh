@@ -35,6 +35,6 @@ read SLACK_CHANNEL
 sed -i "s/{{SLACK_KEY}}/$SLACK_KEY/" "$INSTALL_PATH/config/docker/variables.sh"
 sed -i "s/{{SLACK_CHANNEL}}/$SLACK_CHANNEL/" "$INSTALL_PATH/config/docker/variables.sh"
 
-sed -i "s/{{INSTALL_PATH}}/$INSTALL_PATH/" "$INSTALL_PATH/config/docker/stack.yml"
+sed -i "s#{{INSTALL_PATH}}#$INSTALL_PATH#" "$INSTALL_PATH/config/docker/stack.yml"
 
 #bash "$INSTALL_PATH/bin/docker/master.sh"
