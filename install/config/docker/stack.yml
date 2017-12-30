@@ -1,0 +1,269 @@
+version: "3"
+
+services:
+
+    portainer:
+        image: portainer/portainer
+        ports:
+            - "9000"
+        networks:
+            - swarm-portainer
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+                constraints: [node.role == manager]
+
+    elasticsearch:
+        image: elasticsearch
+        networks:
+            - swarm-log
+        volumes:
+            - {{INSTALL_PATH}}/docker/elasticsearch/data:/usr/share/elasticsearch/data
+        labels:
+            com.docker.stack.namespace: "log"
+            com.docker.service.name: "elasticsearch"
+        deploy:
+            mode: replicated
+            update_config:
+                parallelism: 1
+                delay: 60s
+            restart_policy:
+                condition: none
+                max_attempts: 5
+            labels:
+                com.docker.stack.namespace: "log"
+                com.docker.service.name: "elasticsearch"
+
+    logstash:
+        image: logstash:latest
+        depends_on:
+            - elasticsearch
+        ports:
+            - "12201:12201/udp"
+            - "8080:8082"
+        networks:
+            - swarm-log
+        command: -e "input { gelf {} } output { elasticsearch { hosts => ['elasticsearch']} stdout {} }"
+        labels:
+            com.docker.stack.namespace: "log"
+            com.docker.service.name: "logstash"
+        deploy:
+            mode: replicated
+            update_config:
+                parallelism: 1
+                delay: 60s
+            restart_policy:
+                condition: none
+                max_attempts: 5
+            labels:
+                com.docker.stack.namespace: "log"
+                com.docker.service.name: "logstash"
+
+    kibana:
+        image: kibana
+        depends_on:
+            - elasticsearch
+        ports:
+            - "5601:5601"
+        networks:
+            - swarm-log
+        environment:
+            - ELASTICSEARCH_URL=http://elasticsearch:9200
+        labels:
+            com.docker.stack.namespace: "log"
+            com.docker.service.name: "kibana"
+        deploy:
+            mode: replicated
+            update_config:
+                parallelism: 1
+                delay: 60s
+            restart_policy:
+                condition: none
+                max_attempts: 5
+            labels:
+                com.docker.stack.namespace: "log"
+                com.docker.service.name: "kibana"
+
+    prometheus:
+        image: prom/prometheus:v1.8.2
+        depends_on:
+            - elasticsearch
+            - logstash
+            - kibana
+        ports:
+            - "9090:9090"
+        networks:
+            - swarm-monitoring
+        volumes:
+            - {{INSTALL_PATH}}/docker/prometheus/data:/prometheus
+            - {{INSTALL_PATH}}/docker/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
+            - {{INSTALL_PATH}}/docker/prometheus/rules:/etc/prometheus-rules
+        command: "-config.file=/etc/prometheus/prometheus.yml -alertmanager.url http://alertmanager:9093 -storage.local.path=/prometheus -web.console.libraries=/etc/prometheus/console_libraries -web.console.templates=/etc/prometheus/consoles"
+        labels:
+            com.docker.stack.namespace: "monitoring"
+            com.docker.service.name: "prometheus"
+        deploy:
+            mode: replicated
+            replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 60s
+            restart_policy:
+                condition: on-failure
+                max_attempts: 5
+            labels:
+                com.docker.stack.namespace: "monitoring"
+                com.docker.service.name: "prometheus"
+
+    cadvisor:
+        image: google/cadvisor:latest
+        ports:
+            - "8081:8080"
+        networks:
+            - swarm-monitoring
+        volumes:
+            - /:/rootfs:ro
+            - /var/run:/var/run:rw
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+        labels:
+            com.docker.stack.namespace: "monitoring"
+            com.docker.service.name: "cadvisor"
+        deploy:
+            mode: global
+            update_config:
+                parallelism: 1
+                delay: 60s
+            restart_policy:
+                condition: on-failure
+                max_attempts: 5
+            labels:
+                com.docker.stack.namespace: "monitoring"
+                com.docker.service.name: "cadvisor"
+
+    exporter:
+        image: basi/node-exporter:v0.1.1
+        ports:
+            - "9100:9100"
+        networks:
+            - swarm-monitoring
+        environment:
+            - HOST_HOSTNAME=/etc/hostname
+        volumes:
+            - /proc:/host/proc
+            - /sys:/host/sys
+            - /:/rootfs
+            - /etc/hostname:/etc/hostname
+        command: [ -collector.procfs=/host/proc,-collector.sysfs=/host/proc,-collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($$|/)",-collector.textfile.directory=/etc/node-exporter/]
+        labels:
+            com.docker.stack.namespace: "monitoring"
+            com.docker.service.name: "exporter"
+        deploy:
+            mode: global
+            update_config:
+                parallelism: 1
+                delay: 60s
+            restart_policy:
+                condition: on-failure
+                max_attempts: 5
+            labels:
+                com.docker.stack.namespace: "monitoring"
+                com.docker.service.name: "exporter"
+
+    alertmanager:
+        image: prom/alertmanager
+        ports:
+            - "9093:9093"
+        networks:
+            - swarm-monitoring
+        volumes:
+            - {{INSTALL_PATH}}/docker/alertmanager/config/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+            - {{INSTALL_PATH}}/docker/alertmanager/data:/etc/alertmanager/data
+        command: [-config.file=/etc/alertmanager/alertmanager.yml,-storage.path=/alertmanager/data]
+        labels:
+            com.docker.stack.namespace: "monitoring"
+            com.docker.service.name: "alertmanager"
+        deploy:
+            mode: replicated
+            replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 60s
+            restart_policy:
+                condition: on-failure
+                max_attempts: 5
+            labels:
+                com.docker.stack.namespace: "monitoring"
+                com.docker.service.name: "alertmanager"
+
+    elastalert:
+        image: ivankrizsan/elastalert:0.1.8
+        ports:
+            - "3030:3030"
+        networks:
+            - swarm-log
+        environment:
+            - ELASTALERT_CONFIG=elastalert.yaml
+            - CONFIG_DIR=/opt/config
+            - LOG_DIR=/opt/logs
+            - ELASTALERT_CONFIG=/opt/config/elastalert.yaml
+            - ELASTICSEARCH_PORT=9200
+            - ELASTICSEARCH_HOST=elasticsearch
+            - ELASTALERT_SUPERVISOR_CONF=/opt/config/supervisord.conf
+        volumes:
+            - {{INSTALL_PATH}}/docker/elastalert/config:/opt/config
+            - {{INSTALL_PATH}}/docker/elastalert/rules:/opt/rules
+            - {{INSTALL_PATH}}/docker/elastalert/log:/opt/logs
+        labels:
+            com.docker.stack.namespace: "monitoring"
+            com.docker.service.name: "elastalert"
+        deploy:
+            mode: replicated
+            replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 60s
+            restart_policy:
+                condition: on-failure
+                max_attempts: 5
+            labels:
+                com.docker.stack.namespace: "monitoring"
+                com.docker.service.name: "elastalert"
+
+    grafana:
+        image: grafana/grafana
+        ports:
+            - "3000:3000"
+        networks:
+            - swarm-monitoring
+            - swarm-log
+        volumes:
+            - {{INSTALL_PATH}}/docker/grafana/data:/var/lib/grafana
+        command: -e "GF_SERVER_ROOT_URL=http://grafana GF_SECURITY_ADMIN_PASSWORD=admin PROMETHEUS_ENDPOINT=http://prometheus:9090 ELASTICSEARCH_ENDPOINT=http://elasticsearch:9200"
+        labels:
+            com.docker.stack.namespace: "monitoring"
+            com.docker.service.name: "grafana"
+        deploy:
+            mode: replicated
+            replicas: 1
+            update_config:
+                parallelism: 1
+                delay: 60s
+            restart_policy:
+                condition: on-failure
+                max_attempts: 5
+            labels:
+                com.docker.stack.namespace: "monitoring"
+                com.docker.service.name: "grafana"
+
+networks:
+    swarm-log:
+        external: true
+    swarm-monitoring:
+        external: true
+    swarm-portainer:
+        external: true
+
