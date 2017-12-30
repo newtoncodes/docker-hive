@@ -6,6 +6,12 @@ if [ -z "$INSTALL_PATH" ]; then
 fi
 DIRNAME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+echo "SSH allow to IP:"
+read IP_SSH_REMOTE
+
+echo "VPN internal IP:"
+read IP_VPN
+
 
 # Remove online.net mirrors
 sed -i 's/http:\/\/mirrors.online.net\/ubuntu/http:\/\/archive.ubuntu.com\/ubuntu/' /etc/apt/sources.list
@@ -45,15 +51,13 @@ mkdir -p "$INSTALL_PATH/config"
 
 cp -r ${DIRNAME}/../install/bin/*.sh "$INSTALL_PATH/bin/"
 cp -r "$DIRNAME/../install/config/iptables" "$INSTALL_PATH/config/"
-cp -r "$DIRNAME/../install/config/openvpn" "$INSTALL_PATH/config/"
+mkdir -p "$INSTALL_PATH/config/openvpn/available"
+mkdir -p "$INSTALL_PATH/config/openvpn/enabled"
+mkdir -p "$INSTALL_PATH/config/iptables/available"
+mkdir -p "$INSTALL_PATH/config/iptables/enabled"
+
 
 chmod +x ${INSTALL_PATH}/bin/*.sh
-
-echo "SSH allow to IP:"
-read IP_SSH_REMOTE
-
-echo "VPN internal IP:"
-read IP_VPN
 
 ln -s ${INSTALL_PATH}/config/iptables/available/*.sh "$INSTALL_PATH/config/iptables/enabled/"
 
