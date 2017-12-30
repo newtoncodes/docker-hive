@@ -5,7 +5,7 @@ services:
     portainer:
         image: portainer/portainer
         ports:
-            - "9000"
+            - "9000:9000"
         networks:
             - swarm-portainer
         volumes:

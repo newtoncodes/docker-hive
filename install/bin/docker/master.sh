@@ -11,12 +11,18 @@ cp "$INSTALL_PATH/docker/alertmanager/config/alertmanager.yml.original" "$INSTAL
 rm -rf "$INSTALL_PATH/docker/elastalert/rules/elastrules.error.yaml"
 cp "$INSTALL_PATH/docker/elastalert/rules/elastrules.error.yaml.original" "$INSTALL_PATH/docker/elastalert/rules/elastrules.error.yaml"
 
-sed -i "$INSTALL_PATH/docker/alertmanager/config/alertmanager.yml" "s/{{SLACK_KEY}}/$SWARM_SLACK_KEY/"
-sed -i "$INSTALL_PATH/docker/alertmanager/config/alertmanager.yml" "s/{{SLACK_CHANNEL}}/$SWARM_SLACK_CHANNEL/"
+sed -i "s/{{SLACK_KEY}}/$SWARM_SLACK_KEY/" "$INSTALL_PATH/docker/alertmanager/config/alertmanager.yml"
+sed -i "s/{{SLACK_CHANNEL}}/$SWARM_SLACK_CHANNEL/" "$INSTALL_PATH/docker/alertmanager/config/alertmanager.yml"
 
-sed -i "$INSTALL_PATH/docker/elastalert/rules/elastrules.error.yaml" "s/{{SLACK_KEY}}/$SWARM_SLACK_KEY/"
-sed -i "$INSTALL_PATH/docker/elastalert/rules/elastrules.error.yaml" "s/{{SLACK_CHANNEL}}/$SWARM_SLACK_CHANNEL/"
+sed -i "s/{{SLACK_KEY}}/$SWARM_SLACK_KEY/" "$INSTALL_PATH/docker/elastalert/rules/elastrules.error.yaml"
+sed -i "s/{{SLACK_CHANNEL}}/$SWARM_SLACK_CHANNEL/" "$INSTALL_PATH/docker/elastalert/rules/elastrules.error.yaml"
 
 
-docker stack rm swarm
+echo "Remove old stack? Type yes."
+read rmOld
+
+if ["$rmOld" == "yes"]; then
+  docker stack rm swarm
+fi
+
 docker stack deploy --compose-file "$INSTALL_PATH/config/docker/stack.yml" --with-registry-auth swarm

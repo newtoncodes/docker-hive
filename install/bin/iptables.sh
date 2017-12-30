@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 INSTALL_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-INSTALL_PATH="$INSTALL_PATH/../";
+INSTALL_PATH="$INSTALL_PATH/..";
 
 
 # Clear.
