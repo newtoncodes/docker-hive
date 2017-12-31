@@ -145,6 +145,8 @@ echo "{\"experimental\": true, \"metrics-addr\": \"$HOST_IP:9323\"}" > /etc/dock
 if [ "$SWARM_MASTER" = "yes" ]; then
     cp -r "$DIRNAME/../install/bin/swarm" ${INSTALL_PATH}/bin/
     chmod +x ${INSTALL_PATH}/bin/swarm
+    cp -r "$DIRNAME/../install/bin/swarm-snet" ${INSTALL_PATH}/bin/
+    chmod +x ${INSTALL_PATH}/bin/swarm-snet
 
     if [ -d "$INSTALL_PATH/config/swarm" ]; then
         echo "Swarm config exists. Do you want to remove the configs (yes/no, default: no):"
@@ -167,7 +169,7 @@ if [ "$SWARM_MASTER" = "yes" ]; then
     docker swarm init
 
     # Init swarm network
-    docker network create -d overlay swarm
+    docker network create --attachable -d overlay swarm
 
     # Init swarm volumes
     docker volume create swarm-portainer
