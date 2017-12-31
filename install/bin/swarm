@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 SWARM_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SWARM_PATH="$SWARM_PATH/../..";
+SWARM_PATH="$SWARM_PATH/..";
 
 echo "Remove old stack (yes/no; default: no):"
 read rmOld
 
-if [ ${rmOld} = "yes" ]; then
-  docker stack rm swarm
+if [ "$rmOld" = "yes" ]; then
+    docker stack rm swarm
 fi
 
 source ${SWARM_PATH}/config/swarm/vars.sh

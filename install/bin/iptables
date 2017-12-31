@@ -26,11 +26,13 @@ iptables -A INPUT -p udp -j LOG --log-prefix "UDP-SPAM " --log-ip-options -m lim
 iptables -A INPUT -p tcp -j LOG --log-prefix "TCP-SPAM " --log-ip-options -m limit --limit 1/m --limit-burst 1
 
 
-for f in ${INSTALL_PATH}/config/iptables/enabled/*
-do
-    echo "Executing iptables config: $f"
-    source ${f};
-done
+if [ "$(ls -A $INSTALL_PATH/config/iptables/enabled)" ]; then
+    for f in ${INSTALL_PATH}/config/iptables/enabled/*
+    do
+        echo "Executing iptables config: $f"
+        source ${f};
+    done
+fi
 
 
 # Drop by default.

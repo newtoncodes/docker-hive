@@ -121,7 +121,7 @@ bash ${INSTALL_PATH}/bin/iptables
 bash ${INSTALL_PATH}/bin/openvpn
 
 
-if [ ${SWARM_MASTER} = "yes" ]; then
+if [ "$SWARM_MASTER" = "yes" ]; then
     cp -r "$DIRNAME/../install/bin/swarm" ${INSTALL_PATH}/bin/
     chmod +x ${INSTALL_PATH}/bin/swarm
 
@@ -129,7 +129,7 @@ if [ ${SWARM_MASTER} = "yes" ]; then
         echo "Swarm config exists. Do you want to remove the configs (yes/no, default: no):"
         read willRm2
 
-        if [ ${willRm2} = "yes" ]; then
+        if [ "$willRm2" = "yes" ]; then
             rm -rf "$DIRNAME/../install/config/swarm"
             cp -r "$DIRNAME/../install/config/swarm" ${INSTALL_PATH}/config/
         fi
@@ -141,7 +141,7 @@ if [ ${SWARM_MASTER} = "yes" ]; then
         echo "Swarm data exists. Do you want to remove the data (yes/no, default: no):"
         read willRm3
 
-        if [ ${willRm3} = "yes" ]; then
+        if [ "$willRm3" = "yes" ]; then
             rm -rf ${INSTALL_PATH}/data
         fi
     fi
