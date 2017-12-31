@@ -12,5 +12,18 @@ CMD [ "--collector.textfile.directory=/etc/node-exporter/", \
       "--path.procfs=/host/proc", \
       "--path.sysfs=/host/sys", \
       "--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)", \
-      "--collectors.enabled=textfile,conntrack,diskstats,entropy,filefd,filesystem,loadavg,mdadm,meminfo,netdev,netstat,stat,time,vmstat" \
+      "--collector.textfile", \
+      "--collector.conntrack", \
+      "--collector.diskstats", \
+      "--collector.entropy", \
+      "--collector.filefd", \
+      "--collector.filesystem", \
+      "--collector.loadavg", \
+      "--collector.mdadm", \
+      "--collector.meminfo", \
+      "--collector.netdev", \
+      "--collector.netstat", \
+      "--collector.stat", \
+      "--collector.time", \
+      "--collector.vmstat" \
 ]
