@@ -12,7 +12,7 @@ read IP_ALL
 echo "Is this a swarm master node (yes/no; default: no):"
 read SWARM_MASTER
 
-if [ ${SWARM_MASTER} = "yes" ]; then
+if [ "$SWARM_MASTER" = "yes" ]; then
     echo "Admin username:"
     read ADMIN_USERNAME
 
@@ -95,8 +95,12 @@ if [ -d "$INSTALL_PATH/config" ]; then
         mkdir -p ${INSTALL_PATH}/config/iptables/available
         mkdir -p ${INSTALL_PATH}/config/iptables/enabled
 
-        ln -s ${INSTALL_PATH}/config/iptables/available/* ${INSTALL_PATH}/config/iptables/enabled/
-        ln -s ${INSTALL_PATH}/config/openvpn/available/* ${INSTALL_PATH}/config/openvpn/enabled/
+        if [ "$(ls -A $INSTALL_PATH/config/iptables/available)" ]; then
+            ln -s ${INSTALL_PATH}/config/iptables/available/* ${INSTALL_PATH}/config/iptables/enabled/
+        fi
+        if [ "$(ls -A $INSTALL_PATH/config/openvpn/available)" ]; then
+            ln -s ${INSTALL_PATH}/config/openvpn/available/* ${INSTALL_PATH}/config/openvpn/enabled/
+        fi
     fi
 else
     mkdir -p ${INSTALL_PATH}/config
@@ -106,13 +110,17 @@ else
     mkdir -p ${INSTALL_PATH}/config/iptables/available
     mkdir -p ${INSTALL_PATH}/config/iptables/enabled
 
-    ln -s ${INSTALL_PATH}/config/iptables/available/* ${INSTALL_PATH}/config/iptables/enabled/
-    ln -s ${INSTALL_PATH}/config/openvpn/available/* ${INSTALL_PATH}/config/openvpn/enabled/
+    if [ "$(ls -A $INSTALL_PATH/config/iptables/available)" ]; then
+        ln -s ${INSTALL_PATH}/config/iptables/available/* ${INSTALL_PATH}/config/iptables/enabled/
+    fi
+    if [ "$(ls -A $INSTALL_PATH/config/openvpn/available)" ]; then
+        ln -s ${INSTALL_PATH}/config/openvpn/available/* ${INSTALL_PATH}/config/openvpn/enabled/
+    fi
 fi
 
 sed -i "s/{{IP_SSH_REMOTE}}/$IP_SSH_REMOTE/" ${INSTALL_PATH}/config/iptables/available/ssh.sh
 
-if [ ${IP_ALL} != "" ]; then
+if [ "$IP_ALL" != "" ]; then
     sed -i "s/{{IP_ALL}}/$IP_ALL/" ${INSTALL_PATH}/config/iptables/available/all.sh
 else
     rm -rf ${INSTALL_PATH}/config/iptables/enabled/all.sh
