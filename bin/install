@@ -84,7 +84,9 @@ if [ -d "$INSTALL_PATH/config" ]; then
     echo "Directory exists. Do you want to remove the configs (yes/no, default: no):"
     read willRm
 
-    if [ ${willRm} = "yes" ]; then
+    if [ "$willRm" = "yes" ]; then
+        echo "Removing old configs..."
+
         rm -rf ${INSTALL_PATH}/config
         mkdir -p ${INSTALL_PATH}/config
         cp -r ${DIRNAME}/../install/config/iptables ${INSTALL_PATH}/config/
@@ -130,6 +132,8 @@ if [ "$SWARM_MASTER" = "yes" ]; then
         read willRm2
 
         if [ "$willRm2" = "yes" ]; then
+            echo "Removing old swarm configs..."
+
             rm -rf "$DIRNAME/../install/config/swarm"
             cp -r "$DIRNAME/../install/config/swarm" ${INSTALL_PATH}/config/
         fi
@@ -142,6 +146,8 @@ if [ "$SWARM_MASTER" = "yes" ]; then
         read willRm3
 
         if [ "$willRm3" = "yes" ]; then
+            echo "Removing old swarm data..."
+
             rm -rf ${INSTALL_PATH}/data
         fi
     fi
