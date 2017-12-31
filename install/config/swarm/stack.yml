@@ -162,17 +162,12 @@ services:
                     memory: 128M
 
     snet:
-        image: newtoncodes/snet
-        ports:
-            - "3000:3000"
-            - "3001:3001"
-            - "3002:3002"
-            - "3003:3003"
-            - "3004:3004"
+        image: newtoncodes/swarm-snet:1.0.0
+        ports: {{SWARM_PORTS}}
         networks:
             - swarm
         volumes:
-            -
+            - {{SWARM_PATH}}/config/openvpn/enabled_swarm:/etc/snet
         deploy:
             placement:
                 constraints:
