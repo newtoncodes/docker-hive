@@ -26,3 +26,45 @@ Inspired by: https://github.com/stefanprodan/swarmprom
 ###### TODO: auth
 ###### TODO: remove all ports
 ###### TODO: snet
+
+#### Delete all containers (force!! running or stopped containers)
+
+```bash
+docker rm -f $(docker ps -qa)
+```
+
+#### Delete old containers
+
+```bash
+docker ps -a | grep 'weeks ago' | awk '{print $1}' | xargs docker rm
+```
+
+#### Delete stopped containers
+
+```bash
+docker rm -v $(docker ps -a -q -f status=exited)
+```
+
+#### Delete containers after stopping
+
+```bash
+docker stop $(docker ps -aq) && docker rm -v $(docker ps -aq)
+```
+
+#### Delete dangling images
+
+```bash
+docker rmi $(docker images -q -f dangling=true)
+```
+
+#### Delete all images
+
+```bash
+docker rmi $(docker images -q)
+```
+
+#### Delete dangling volumes
+
+```bash
+docker volume rm $(docker volume ls -q -f dangling=true)
+```
