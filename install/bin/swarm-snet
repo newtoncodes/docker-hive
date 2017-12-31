@@ -3,11 +3,8 @@
 SWARM_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 SWARM_PATH="$SWARM_PATH/..";
 
-docker ps | grep "newtoncodes/snet:1.0.0" | awk '{print $1}' | xargs --no-run-if-empty docker stop
-docker ps -a | grep "newtoncodes/snet:1.0.0" | awk '{print $1}' | xargs --no-run-if-empty docker rm
-docker ps -a | grep "Exited" | awk '{print $1}' | xargs --no-run-if-empty docker rm
-
 docker stop $(docker ps -a -q --filter="name=swarm_snet")
+docker rm $(docker ps -a -q --filter="name=swarm_snet")
 
 docker run \
   --name swarm_snet \

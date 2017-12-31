@@ -199,6 +199,7 @@ if [ "$SWARM_MASTER" = "yes" ]; then
 
     # Run stack
     bash ${INSTALL_PATH}/bin/swarm
+    bash ${INSTALL_PATH}/bin/swarm-snet
 
 else
 
