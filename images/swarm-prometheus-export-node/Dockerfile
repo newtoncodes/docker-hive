@@ -6,4 +6,4 @@ ENV NODE_NAME=none
 COPY start.sh /
 
 ENTRYPOINT []
-CMD [ "bash", "-l", "/start.sh" ]
+CMD [ "sh", "-l", "/start.sh" ]
