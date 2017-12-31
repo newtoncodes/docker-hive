@@ -1,5 +1,7 @@
 FROM prom/prometheus:v2.0.0
 
+USER root
+
 COPY start.sh /
 COPY config /etc/prometheus/
 RUN chown -R nobody:nogroup /etc/prometheus /prometheus
