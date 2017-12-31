@@ -8,6 +8,12 @@ rule_files:
   - "rules/swarm_node.yml"
   - "rules/swarm_task.yml"
 
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - alertmanager:9093
+
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
@@ -33,9 +39,3 @@ scrape_configs:
       - 'tasks.export-node'
       type: 'A'
       port: 9100
-
-alerting:
-  alertmanagers:
-  - static_configs:
-    - targets:
-      - alertmanager:9093

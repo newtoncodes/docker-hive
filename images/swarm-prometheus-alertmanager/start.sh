@@ -6,6 +6,7 @@ cat /etc/alertmanager/alertmanager.yml | \
     sed "s@{{SLACK_USERNAME}}@$SLACK_USERNAME@" \
 > /tmp/alertmanager.yml
 
+rm /etc/alertmanager/alertmanager.yml
 mv /tmp/alertmanager.yml /etc/alertmanager/alertmanager.yml
 rm -rf /tmp/alertmanager.yml
 
