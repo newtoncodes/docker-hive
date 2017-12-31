@@ -52,7 +52,7 @@ services:
     export-dockerd:
         image: newtoncodes/swarm-prometheus-export-dockerd
         ports:
-            - "9323:9323" #remove
+            - "9324:9324" #remove
         networks:
             - swarm
         environment:

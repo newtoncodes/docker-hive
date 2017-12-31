@@ -18,7 +18,7 @@ scrape_configs:
     - names:
       - 'tasks.export-dockerd'
       type: 'A'
-      port: 9323
+      port: 9324
 
   - job_name: 'export-cadvisor'
     dns_sd_configs:
