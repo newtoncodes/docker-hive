@@ -9,6 +9,10 @@ volumes:
         external: true
     swarm-grafana:
         external: true
+    swarm-grafana-log:
+        external: true
+    swarm-grafana-etc:
+        external: true
 
 networks:
     swarm:
@@ -141,6 +145,8 @@ services:
             - swarm
         volumes:
             - swarm-grafana:/var/lib/grafana
+            - swarm-grafana-log:/var/log/grafana
+            - swarm-grafana-etc:/etc/grafana
         environment:
             - ADMIN_USERNAME=${SWARM_ADMIN_USERNAME:-admin}
             - ADMIN_PASSWORD=${SWARM_ADMIN_PASSWORD:-admin}

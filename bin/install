@@ -169,6 +169,8 @@ if [ "$SWARM_MASTER" = "yes" ]; then
     docker volume create swarm-prometheus-alertmanager
     docker volume create swarm-prometheus
     docker volume create swarm-grafana
+    docker volume create swarm-grafana-log
+    docker volume create swarm-grafana-etc
 
     # Replace variables
     sed -i "s/{{HOST_IP}}/$HOST_IP/" ${INSTALL_PATH}/config/swarm/vars.sh
