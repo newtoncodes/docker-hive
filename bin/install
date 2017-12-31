@@ -136,6 +136,8 @@ fi
 bash ${INSTALL_PATH}/bin/iptables
 bash ${INSTALL_PATH}/bin/openvpn
 
+/etc/init.d/docker start
+
 HOST_IP=`cut -d'/' -f1 <<< \`ip -o addr show docker_gwbridge | awk '{print $4}'\``
 
 echo "{\"experimental\": true, \"metrics-addr\": \"$HOST_IP:9323\"}" > /etc/docker/daemon.json
@@ -143,10 +145,13 @@ echo "{\"experimental\": true, \"metrics-addr\": \"$HOST_IP:9323\"}" > /etc/dock
 
 
 if [ "$SWARM_MASTER" = "yes" ]; then
+
     cp -r "$DIRNAME/../install/bin/swarm" ${INSTALL_PATH}/bin/
     chmod +x ${INSTALL_PATH}/bin/swarm
     cp -r "$DIRNAME/../install/bin/swarm-snet" ${INSTALL_PATH}/bin/
     chmod +x ${INSTALL_PATH}/bin/swarm-snet
+    cp -r "$DIRNAME/../install/bin/swarm-add-node" ${INSTALL_PATH}/bin/
+    chmod +x ${INSTALL_PATH}/bin/swarm-add-node
 
     if [ -d "$INSTALL_PATH/config/swarm" ]; then
         echo "Swarm config exists. Do you want to remove the configs (yes/no, default: no):"
