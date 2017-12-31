@@ -16,7 +16,7 @@ networks:
 
 services:
     portainer:
-        image: newtoncodes/swarm-portainer
+        image: newtoncodes/swarm-portainer:1.15.5
         ports:
             - "9000:9000"
         networks:
@@ -30,7 +30,7 @@ services:
                     - node.role == manager
 
     export-cadvisor:
-        image: newtoncodes/swarm-prometheus-export-cadvisor
+        image: newtoncodes/swarm-prometheus-export-cadvisor:0.28.3
         ports:
             - "8080:8080" #remove
         networks:
@@ -50,7 +50,7 @@ services:
                     memory: 64M
 
     export-dockerd:
-        image: newtoncodes/swarm-prometheus-export-dockerd
+        image: newtoncodes/swarm-prometheus-export-dockerd:1.0.0
         ports:
             - "9324:9324" #remove
         networks:
@@ -66,7 +66,7 @@ services:
                     memory: 64M
 
     export-node:
-        image: newtoncodes/swarm-prometheus-export-node
+        image: newtoncodes/swarm-prometheus-export-node:0.15.2
         ports:
             - "9100:9100" #remove
         networks:
@@ -87,7 +87,7 @@ services:
                     memory: 64M
 
     alertmanager:
-        image: newtoncodes/swarm-prometheus-alertmanager
+        image: newtoncodes/swarm-prometheus-alertmanager:0.12.0
         ports:
             - "9093:9093" #remove
         networks:
@@ -111,7 +111,7 @@ services:
                     memory: 64M
 
     prometheus:
-        image: newtoncodes/swarm-prometheus
+        image: newtoncodes/swarm-prometheus:2.0.0
         ports:
             - "9090:9090"
         networks:
@@ -131,7 +131,7 @@ services:
                     memory: 1024M
 
     grafana:
-        image: newtoncodes/swarm-grafana
+        image: newtoncodes/swarm-grafana:4.6.3
         ports:
             - "3000:3000"
         networks:
@@ -154,7 +154,7 @@ services:
                     memory: 64M
 
     unsee:
-        image: newtoncodes/swarm-unsee
+        image: newtoncodes/swarm-unsee:0.8.0
         ports:
             - "3001:8080"
         networks:
