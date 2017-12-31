@@ -73,23 +73,40 @@ apt-cache madison docker-ce
 ###
 
 mkdir -p ${INSTALL_PATH}
-rm -rf ${INSTALL_PATH}/*
-
+rm -rf ${INSTALL_PATH}/bin
 mkdir -p ${INSTALL_PATH}/bin
-mkdir -p ${INSTALL_PATH}/config
 
-cp -r ${DIRNAME}/../install/config/iptables ${INSTALL_PATH}/config/
 cp -r ${DIRNAME}/../install/bin/iptables ${INSTALL_PATH}/bin/
 cp -r ${DIRNAME}/../install/bin/openvpn ${INSTALL_PATH}/bin/
 chmod +x ${INSTALL_PATH}/bin/*
 
-mkdir -p ${INSTALL_PATH}/config/openvpn/available
-mkdir -p ${INSTALL_PATH}/config/openvpn/enabled
-mkdir -p ${INSTALL_PATH}/config/iptables/available
-mkdir -p ${INSTALL_PATH}/config/iptables/enabled
+if [ -d "$INSTALL_PATH/config" ]; then
+    echo "Directory exists. Do you want to remove the configs (yes/no, default: no):"
+    read willRm
 
-ln -s ${INSTALL_PATH}/config/iptables/available/* ${INSTALL_PATH}/config/iptables/enabled/
-ln -s ${INSTALL_PATH}/config/openvpn/available/* ${INSTALL_PATH}/config/openvpn/enabled/
+    if [ ${willRm} = "yes" ]; then
+        rm -rf ${INSTALL_PATH}/config
+        mkdir -p ${INSTALL_PATH}/config
+        cp -r ${DIRNAME}/../install/config/iptables ${INSTALL_PATH}/config/
+        mkdir -p ${INSTALL_PATH}/config/openvpn/available
+        mkdir -p ${INSTALL_PATH}/config/openvpn/enabled
+        mkdir -p ${INSTALL_PATH}/config/iptables/available
+        mkdir -p ${INSTALL_PATH}/config/iptables/enabled
+
+        ln -s ${INSTALL_PATH}/config/iptables/available/* ${INSTALL_PATH}/config/iptables/enabled/
+        ln -s ${INSTALL_PATH}/config/openvpn/available/* ${INSTALL_PATH}/config/openvpn/enabled/
+    fi
+else
+    mkdir -p ${INSTALL_PATH}/config
+    cp -r ${DIRNAME}/../install/config/iptables ${INSTALL_PATH}/config/
+    mkdir -p ${INSTALL_PATH}/config/openvpn/available
+    mkdir -p ${INSTALL_PATH}/config/openvpn/enabled
+    mkdir -p ${INSTALL_PATH}/config/iptables/available
+    mkdir -p ${INSTALL_PATH}/config/iptables/enabled
+
+    ln -s ${INSTALL_PATH}/config/iptables/available/* ${INSTALL_PATH}/config/iptables/enabled/
+    ln -s ${INSTALL_PATH}/config/openvpn/available/* ${INSTALL_PATH}/config/openvpn/enabled/
+fi
 
 sed -i "s/{{IP_SSH_REMOTE}}/$IP_SSH_REMOTE/" ${INSTALL_PATH}/config/iptables/available/ssh.sh
 
@@ -105,10 +122,29 @@ bash ${INSTALL_PATH}/bin/openvpn
 
 
 if [ ${SWARM_MASTER} = "yes" ]; then
-
-    cp -r "$DIRNAME/../install/config/swarm" ${INSTALL_PATH}/config/
     cp -r "$DIRNAME/../install/bin/swarm" ${INSTALL_PATH}/bin/
     chmod +x ${INSTALL_PATH}/bin/swarm
+
+    if [ -d "$INSTALL_PATH/config/swarm" ]; then
+        echo "Swarm config exists. Do you want to remove the configs (yes/no, default: no):"
+        read willRm2
+
+        if [ ${willRm2} = "yes" ]; then
+            rm -rf "$DIRNAME/../install/config/swarm"
+            cp -r "$DIRNAME/../install/config/swarm" ${INSTALL_PATH}/config/
+        fi
+    else
+        cp -r "$DIRNAME/../install/config/swarm" ${INSTALL_PATH}/config/
+    fi
+
+    if [ -d "$INSTALL_PATH/data" ]; then
+        echo "Swarm data exists. Do you want to remove the data (yes/no, default: no):"
+        read willRm3
+
+        if [ ${willRm3} = "yes" ]; then
+            rm -rf ${INSTALL_PATH}/data
+        fi
+    fi
 
     mkdir -p ${INSTALL_PATH}/data/prometheus
     mkdir -p ${INSTALL_PATH}/data/alertmanager
