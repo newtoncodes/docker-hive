@@ -132,7 +132,7 @@ services:
         volumes:
             - {{SWARM_PATH}}/grafana:/var/lib/grafana
         environment:
-            - ADMIN_USER=${SWARM_ADMIN_USER:-admin}
+            - ADMIN_USERNAME=${SWARM_ADMIN_USERNAME:-admin}
             - ADMIN_PASSWORD=${SWARM_ADMIN_PASSWORD:-admin}
         deploy:
             mode: replicated
