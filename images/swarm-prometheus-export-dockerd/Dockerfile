@@ -8,4 +8,6 @@ COPY start.sh /
 RUN chmod +x /start.sh
 COPY config/nginx.conf /etc/nginx/nginx.conf
 
+EXPOSE 9323
+
 CMD [ "bash", "-l", "/start.sh" ]
