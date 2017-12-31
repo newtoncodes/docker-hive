@@ -26,7 +26,8 @@ fi
 
 mv /tmp/prometheus.yml /etc/prometheus/prometheus.yml
 
-set -- /bin/prometheus "$@"
-
-exec "$@"
-
+/bin/prometheus \
+ --config.file="/etc/prometheus/prometheus.yml", \
+ --web.console.libraries="/etc/prometheus/console_libraries", \
+ --web.console.templates="/etc/prometheus/consoles", \
+ --storage.tsdb.path="/prometheus"

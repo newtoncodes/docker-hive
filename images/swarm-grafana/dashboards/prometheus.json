@@ -458,7 +458,7 @@
             "bars": false,
             "dashLength": 10,
             "dashes": false,
-            "datasource": null,
+            "datasource": "Prometheus",
             "editable": true,
             "error": false,
             "fill": 1,
@@ -539,7 +539,7 @@
             "bars": false,
             "dashLength": 10,
             "dashes": false,
-            "datasource": null,
+            "datasource": "Prometheus",
             "editable": true,
             "error": false,
             "fill": 1,
@@ -625,7 +625,7 @@
             "bars": false,
             "dashLength": 10,
             "dashes": false,
-            "datasource": null,
+            "datasource": "Prometheus",
             "decimals": 0,
             "editable": true,
             "error": false,
@@ -708,7 +708,7 @@
             "bars": false,
             "dashLength": 10,
             "dashes": false,
-            "datasource": null,
+            "datasource": "Prometheus",
             "editable": true,
             "error": false,
             "fill": 1,
@@ -1133,7 +1133,7 @@
     "schemaVersion": 14,
     "style": "dark",
     "tags": [
-      "swarmprom"
+      "swarm"
     ],
     "templating": {
       "list": []
