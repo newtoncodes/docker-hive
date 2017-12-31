@@ -1,0 +1,150 @@
+#!/usr/bin/env bash
+
+echo "Install path:"
+read INSTALL_PATH
+
+echo "Allow SSH to secure remote IP used when VPN is down:"
+read IP_SSH_REMOTE
+
+echo "Allow ALL to internal IP like an admin VPN:"
+read IP_ALL
+
+echo "Is this a swarm master node (yes/no; default: no):"
+read SWARM_MASTER
+
+if [ ${SWARM_MASTER} = "yes" ]; then
+    echo "Admin username:"
+    read ADMIN_USERNAME
+
+    echo "Admin password:"
+    read ADMIN_PASSWORD
+
+    echo "Slack key:"
+    read SLACK_KEY
+
+    echo "Slack username:"
+    read SLACK_USERNAME
+
+    echo "Slack channel:"
+    read SLACK_CHANNEL
+else
+    echo "Swarm host:"
+    read SWARM_HOST
+
+    echo "Swarm port:"
+    read SWARM_PORT
+
+    echo "Swarm token:"
+    read SWARM_TOKEN
+fi
+
+###
+
+DIRNAME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Remove online.net mirrors
+sed -i 's/http:\/\/mirrors.online.net\/ubuntu/http:\/\/archive.ubuntu.com\/ubuntu/' /etc/apt/sources.list
+
+apt-get update
+DEBIAN_FRONTEND="noninteractive" apt-get upgrade -y
+
+DEBIAN_FRONTEND="noninteractive" apt-get install -y \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    software-properties-common
+
+DEBIAN_FRONTEND="noninteractive" apt-get install -y iptables-persistent
+DEBIAN_FRONTEND="noninteractive" apt-get install -y openvpn socat
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+apt-key fingerprint 0EBFCD88
+
+add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+apt-get update
+DEBIAN_FRONTEND="noninteractive" apt-get install -y docker-ce
+apt-cache madison docker-ce
+
+###
+
+mkdir -p ${INSTALL_PATH}
+rm -rf ${INSTALL_PATH}/*
+
+mkdir -p ${INSTALL_PATH}/bin
+mkdir -p ${INSTALL_PATH}/config
+
+cp -r ${DIRNAME}/../install/config/iptables ${INSTALL_PATH}/config/
+cp -r ${DIRNAME}/../install/bin/iptables ${INSTALL_PATH}/bin/
+cp -r ${DIRNAME}/../install/bin/openvpn ${INSTALL_PATH}/bin/
+chmod +x ${INSTALL_PATH}/bin/*
+
+mkdir -p ${INSTALL_PATH}/config/openvpn/available
+mkdir -p ${INSTALL_PATH}/config/openvpn/enabled
+mkdir -p ${INSTALL_PATH}/config/iptables/available
+mkdir -p ${INSTALL_PATH}/config/iptables/enabled
+
+ln -s ${INSTALL_PATH}/config/iptables/available/* ${INSTALL_PATH}/config/iptables/enabled/
+ln -s ${INSTALL_PATH}/config/openvpn/available/* ${INSTALL_PATH}/config/openvpn/enabled/
+
+sed -i "s/{{IP_SSH_REMOTE}}/$IP_SSH_REMOTE/" ${INSTALL_PATH}/config/iptables/available/ssh.sh
+
+if [ ${IP_ALL} != "" ]; then
+    sed -i "s/{{IP_ALL}}/$IP_ALL/" ${INSTALL_PATH}/config/iptables/available/all.sh
+else
+    rm -rf ${INSTALL_PATH}/config/iptables/enabled/all.sh
+fi
+
+# Run configs
+bash ${INSTALL_PATH}/bin/iptables
+bash ${INSTALL_PATH}/bin/openvpn
+
+
+if [ ${SWARM_MASTER} = "yes" ]; then
+
+    cp -r "$DIRNAME/../install/config/swarm" ${INSTALL_PATH}/config/
+    cp -r "$DIRNAME/../install/bin/swarm" ${INSTALL_PATH}/bin/
+    chmod +x ${INSTALL_PATH}/bin/swarm
+
+    mkdir -p ${INSTALL_PATH}/data/prometheus
+    mkdir -p ${INSTALL_PATH}/data/alertmanager
+    mkdir -p ${INSTALL_PATH}/data/grafana
+
+    echo '{"experimental": true}' > /etc/docker/daemon.json
+    /etc/init.d/docker restart
+
+    # Host setting for ElasticSearch
+    # sysctl -w vm.max_map_count=262144
+
+    # Init swarm
+    docker swarm init
+
+    # Init main networks
+    docker network create -d overlay swarm
+
+    # Replace variables
+    HOST_IP=`cut -d'/' -f1 <<< \`ip -o addr show docker_gwbridge | awk '{print $4}'\``
+    sed -i "s/{{HOST_IP}}/$HOST_IP/" ${INSTALL_PATH}/config/swarm/vars.sh
+
+    sed -i "s/{{ADMIN_USERNAME}}/$ADMIN_USERNAME/" ${INSTALL_PATH}/config/swarm/vars.sh
+    sed -i "s/{{ADMIN_PASSWORD}}/$ADMIN_PASSWORD/" ${INSTALL_PATH}/config/swarm/vars.sh
+
+    sed -i "s/{{SLACK_KEY}}/$SLACK_KEY/" ${INSTALL_PATH}/config/swarm/vars.sh
+    sed -i "s/{{SLACK_USERNAME}}/$SLACK_USERNAME/" ${INSTALL_PATH}/config/swarm/vars.sh
+    sed -i "s/{{SLACK_CHANNEL}}/$SLACK_CHANNEL/" ${INSTALL_PATH}/config/swarm/vars.sh
+
+    sed -i "s#{{SWARM_PATH}}#$INSTALL_PATH/data#" ${INSTALL_PATH}/config/swarm/stack.yml
+
+    # Run stack
+    bash ${INSTALL_PATH}/bin/swarm
+
+else
+
+    # Init swarm
+    docker swarm join --token "$SWARM_TOKEN" "$SWARM_HOST:$SWARM_PORT"
+
+fi

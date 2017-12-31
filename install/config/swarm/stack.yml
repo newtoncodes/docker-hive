@@ -1,0 +1,161 @@
+version: "3.3"
+
+networks:
+    swarm:
+        external: true
+
+services:
+    portainer:
+        # TODO: auth
+        # TODO: snet
+        image: newtoncodes/swarm-portainer
+        ports:
+            - "9000:9000"
+        networks:
+            - swarm
+        volumes:
+            - /swarm/docker/portainer/data:/data
+            - /var/run/docker.sock:/var/run/docker.sock
+        deploy:
+            placement:
+                constraints:
+                    - node.role == manager
+
+    export-cadvisor:
+        image: newtoncodes/swarm-prometheus-export-cadvisor
+        ports:
+            - "8080:8080" #remove
+        networks:
+            - swarm
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - /:/rootfs:ro
+            - /var/run:/var/run
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+        deploy:
+            mode: global
+            resources:
+                limits:
+                    memory: 128M
+                reservations:
+                    memory: 64M
+
+    export-dockerd:
+        image: newtoncodes/swarm-prometheus-export-dockerd
+        ports:
+            - "9323:9323" #remove
+        networks:
+            - swarm
+        environment:
+            - HOST_IP=${SWARM_HOST_IP:-172.18.0.1}
+        deploy:
+            mode: global
+            resources:
+                limits:
+                    memory: 128M
+                reservations:
+                    memory: 64M
+
+    export-node:
+        image: newtoncodes/swarm-prometheus-export-node
+        ports:
+            - "9100:9100" #remove
+        networks:
+            - swarm
+        volumes:
+            - /proc:/host/proc:ro
+            - /sys:/host/sys:ro
+            - /:/rootfs:ro
+            - /etc/hostname:/etc/nodename
+        environment:
+            - NODE_ID={{.Node.ID}}
+        deploy:
+            mode: global
+            resources:
+                limits:
+                    memory: 128M
+                reservations:
+                    memory: 64M
+
+    alertmanager:
+        image: newtoncodes/swarm-prometheus-alertmanager
+        ports:
+            - "9093:9093" #remove
+        networks:
+            - swarm
+        volumes:
+            - {{SWARM_PATH}}/alertmanager:/alertmanager
+        environment:
+            - SLACK_KEY=${SWARM_SLACK_KEY:-}
+            - SLACK_CHANNEL=${SWARM_SLACK_CHANNEL:-}
+            - SLACK_USERNAME=${SWARM_SLACK_USERNAME:-}
+        deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+                constraints:
+                    - node.role == manager
+            resources:
+                limits:
+                    memory: 128M
+                reservations:
+                    memory: 64M
+
+    prometheus:
+        image: newtoncodes/swarm-prometheus
+        ports:
+            - "9090:9090"
+        networks:
+            - swarm
+        volumes:
+            - {{SWARM_PATH}}/prometheus:/prometheus
+        deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+                constraints:
+                    - node.role == manager
+            resources:
+                limits:
+                    memory: 2048M
+                reservations:
+                    memory: 1024M
+
+    grafana:
+        image: newtoncodes/swarm-grafana
+        ports:
+            - "3000:3000"
+        networks:
+            - swarm
+        volumes:
+            - {{SWARM_PATH}}/grafana:/var/lib/grafana
+        environment:
+            - ADMIN_USER=${SWARM_ADMIN_USER:-admin}
+            - ADMIN_PASSWORD=${SWARM_ADMIN_PASSWORD:-admin}
+        deploy:
+            mode: replicated
+            replicas: 1
+            placement:
+                constraints:
+                    - node.role == manager
+            resources:
+                limits:
+                    memory: 128M
+                reservations:
+                    memory: 64M
+
+    unsee:
+        image: newtoncodes/swarm-unsee
+        ports:
+            - "3001:8080"
+        networks:
+            - swarm
+        deploy:
+            mode: replicated
+            replicas: 1
+            resources:
+                limits:
+                    memory: 1024M
+                reservations:
+                    memory: 128M

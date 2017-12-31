@@ -1,0 +1,41 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'swarm'
+
+rule_files:
+  - "rules/swarm_node.yml"
+  - "rules/swarm_task.yml"
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'export-dockerd'
+    dns_sd_configs:
+    - names:
+      - 'tasks.export-dockerd'
+      type: 'A'
+      port: 9323
+
+  - job_name: 'export-cadvisor'
+    dns_sd_configs:
+    - names:
+      - 'tasks.export-cadvisor'
+      type: 'A'
+      port: 8080
+
+  - job_name: 'export-node'
+    dns_sd_configs:
+    - names:
+      - 'tasks.export-node'
+      type: 'A'
+      port: 9100
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - alertmanager:9093

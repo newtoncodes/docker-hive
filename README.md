@@ -1,9 +1,10 @@
 # Swarm
 
-Docker swarm installation and tools.
+Docker swarm node/master automated install.
 
 #### Links
-https://github.com/robinong79/docker-swarm-monitoring
+
+Inspired by: https://github.com/stefanprodan/swarmprom
 
 ### Swarm management
 
@@ -15,42 +16,9 @@ https://github.com/robinong79/docker-swarm-monitoring
 
 | Service | Purpose |
 | ------ | ----- |
-| [Prometheus](https://hub.docker.com/r/prom/prometheus/) | Central Metric Collecting |
-| [CAdvisor](https://hub.docker.com/r/google/cadvisor/) | Collecting Container information  |
-| [Exporter](https://hub.docker.com/r/basi/node-exporter/) | Collecting Hardware and OS information |
-| [AlertManager](https://hub.docker.com/r/prom/alertmanager/) | Sending out alerts raised from Prometheus |
-| [Grafana](https://hub.docker.com/r/grafana/grafana/) | Dashboard on top of Prometheus |
+| [Prometheus](https://hub.docker.com/r/prom/prometheus/) | Monitoring data collection tool |
+| [CAdvisor](https://hub.docker.com/r/google/cadvisor/) | Prometheus data exporter for containers  |
+| [Node exporter](https://hub.docker.com/r/basi/node-exporter/) | Prometheus data exporter for nodes |
+| [Alert manager](https://hub.docker.com/r/prom/alertmanager/) | Sends alerts from Prometheus |
+| [Grafana](https://hub.docker.com/r/grafana/grafana/) | Monitoring dashboard |
 
-### Log
-
-| Service | Purpose |
-| ------ | ----- |
-| [ElasticSearch](https://hub.docker.com/_/elasticsearch/) | Central storage for Logdata |
-| [LogStash](https://hub.docker.com/_/logstash/) | Log formatter and processing pipeline |
-| [ElastAlert](https://hub.docker.com/r/ivankrizsan/elastalert/) | Sending out alerts raised on Logs |
-| [Kibana](https://hub.docker.com/_/kibana/) | Dashboard on top of Elasticsearch |
-
-### Container/Service log to Logstash
-
-In order to get the logs from the services/containers to Logstash you need to start them with a different logdriver.
-
-Compose file:
-
-```
-log:
-    driver: gelf
-    options:
-        gelf-address: "udp://127.0.0.1:12201"
-        tag: "<name of container for filtering in elasticsearch>" 
-```
-
-Run command:
-
-```
-$ docker run \
-         --log-driver=gelf \
-         --log-opt gelf-address=udp://127.0.0.1:12201 \
-         --log-opt tag="<name of container for filtering in elasticsearch>" \
-         ....
-         ....
-```         
