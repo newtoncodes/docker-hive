@@ -1,6 +1,10 @@
 FROM portainer/portainer:1.15.5
 
-# The line below is to create a new hash on build, otherwise it just copies the source image.
-COPY config/portainer.conf /
+RUN apt-get update
+RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y apache2-utils
 
-CMD ["-H", "unix:///var/run/docker.sock"]
+COPY start.sh /
+
+ENTRYPOINT []
+CMD [ "sh", "-l", "/start.sh" ]
+

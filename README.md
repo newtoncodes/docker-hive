@@ -24,5 +24,5 @@ Inspired by: https://github.com/stefanprodan/swarmprom
 
 
 ###### TODO: auth
+###### TODO: remove all ports
 ###### TODO: snet
-###### TODO: add versions to all images
