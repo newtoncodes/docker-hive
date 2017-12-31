@@ -9,6 +9,5 @@ cat /etc/alertmanager/alertmanager.yml | \
 rm -rf /etc/alertmanager/alertmanager.yml
 mv /tmp/alertmanager.yml /etc/alertmanager/alertmanager.yml
 
-set -- /bin/alertmanager "$@"
 
-exec "$@"
+/bin/alertmanager --config.file="/etc/alertmanager/alertmanager.yml" --storage.path="/alertmanager"

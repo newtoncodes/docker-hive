@@ -7,5 +7,6 @@ ENV SLACK_USERNAME=""
 COPY start.sh /
 COPY config /etc/alertmanager/
 
-ENTRYPOINT [ "/start.sh" ]
-CMD [ "-config.file=/etc/alertmanager/alertmanager.yml", "-storage.path=/alertmanager" ]
+ENTRYPOINT []
+CMD [ "bash", "-l", "/start.sh" ]
+
