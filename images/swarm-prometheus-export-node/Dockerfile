@@ -6,7 +6,8 @@ ENV NODE_NAME=none
 COPY start.sh /
 COPY config /etc/node-exporter
 
-ENTRYPOINT  [ "/start.sh" ]
+CMD [ "bash", "-l", "/start.sh" ]
+
 CMD [ "--collector.textfile.directory=/etc/node-exporter/", \
       "--collector.procfs=/host/proc", \
       "--collector.sysfs=/host/sys", \
