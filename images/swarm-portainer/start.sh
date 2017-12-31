@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/bash
 
 HTPASSWD=`htpasswd -nb -B "$ADMIN_USERNAME" "$ADMIN_PASSWORD" | cut -d ":" -f 2`
 
