@@ -130,6 +130,9 @@ fi
 bash ${INSTALL_PATH}/bin/iptables
 bash ${INSTALL_PATH}/bin/openvpn
 
+echo '{"experimental": true}' > /etc/docker/daemon.json
+/etc/init.d/docker restart
+
 
 if [ "$SWARM_MASTER" = "yes" ]; then
     cp -r "$DIRNAME/../install/bin/swarm" ${INSTALL_PATH}/bin/
@@ -163,9 +166,6 @@ if [ "$SWARM_MASTER" = "yes" ]; then
     mkdir -p ${INSTALL_PATH}/data/prometheus
     mkdir -p ${INSTALL_PATH}/data/alertmanager
     mkdir -p ${INSTALL_PATH}/data/grafana
-
-    echo '{"experimental": true}' > /etc/docker/daemon.json
-    /etc/init.d/docker restart
 
     # Host setting for ElasticSearch
     # sysctl -w vm.max_map_count=262144
