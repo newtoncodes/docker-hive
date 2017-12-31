@@ -21,7 +21,6 @@ networks:
 services:
     portainer:
         image: newtoncodes/swarm-portainer:1.15.5
-        container_name: portainer
         networks:
             - swarm
         volumes:
@@ -37,7 +36,6 @@ services:
 
     export-cadvisor:
         image: newtoncodes/swarm-prometheus-export-cadvisor:0.28.3
-        container_name: export-cadvisor
         networks:
             - swarm
         volumes:
@@ -56,7 +54,6 @@ services:
 
     export-dockerd:
         image: newtoncodes/swarm-prometheus-export-dockerd:1.0.0
-        container_name: export-dockerd
         networks:
             - swarm
         environment:
@@ -71,7 +68,6 @@ services:
 
     export-node:
         image: newtoncodes/swarm-prometheus-export-node:0.15.2
-        container_name: export-node
         networks:
             - swarm
         volumes:
@@ -91,7 +87,6 @@ services:
 
     alertmanager:
         image: newtoncodes/swarm-prometheus-alertmanager:0.12.0
-        container_name: prometheus-alertmanager
         networks:
             - swarm
         volumes:
@@ -114,7 +109,6 @@ services:
 
     prometheus:
         image: newtoncodes/swarm-prometheus:2.0.0
-        container_name: prometheus
         networks:
             - swarm
         volumes:
@@ -133,7 +127,6 @@ services:
 
     grafana:
         image: newtoncodes/swarm-grafana:4.6.3
-        container_name: grafana
         networks:
             - swarm
         volumes:
@@ -157,7 +150,6 @@ services:
 
     unsee:
         image: newtoncodes/swarm-unsee:0.8.0
-        container_name: unsee
         networks:
             - swarm
         deploy:
