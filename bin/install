@@ -154,6 +154,15 @@ if [ "$SWARM_MASTER" = "yes" ]; then
         cp -r "$DIRNAME/../install/config/swarm" ${INSTALL_PATH}/config/
     fi
 
+    echo "Remove old stack (yes/no, default: no):"
+    read willRm3
+
+    if [ "$willRm3" = "yes" ]; then
+        echo "Removing old swarm stack..."
+
+        docker stack rm swarm
+    fi
+
     echo "Remove old network (yes/no, default: no):"
     read willRm3
 
