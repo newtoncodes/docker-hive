@@ -21,8 +21,6 @@ networks:
 services:
     portainer:
         image: newtoncodes/swarm-portainer:1.15.5
-        ports:
-            - "9000:9000"
         networks:
             - swarm
         volumes:
@@ -38,8 +36,6 @@ services:
 
     export-cadvisor:
         image: newtoncodes/swarm-prometheus-export-cadvisor:0.28.3
-        ports:
-            - "8080:8080" #remove
         networks:
             - swarm
         volumes:
@@ -58,8 +54,6 @@ services:
 
     export-dockerd:
         image: newtoncodes/swarm-prometheus-export-dockerd:1.0.0
-        ports:
-            - "9324:9324" #remove
         networks:
             - swarm
         environment:
@@ -74,8 +68,6 @@ services:
 
     export-node:
         image: newtoncodes/swarm-prometheus-export-node:0.15.2
-        ports:
-            - "9100:9100" #remove
         networks:
             - swarm
         volumes:
@@ -95,8 +87,6 @@ services:
 
     alertmanager:
         image: newtoncodes/swarm-prometheus-alertmanager:0.12.0
-        ports:
-            - "9093:9093" #remove
         networks:
             - swarm
         volumes:
@@ -119,8 +109,6 @@ services:
 
     prometheus:
         image: newtoncodes/swarm-prometheus:2.0.0
-        ports:
-            - "9090:9090"
         networks:
             - swarm
         volumes:
@@ -139,8 +127,6 @@ services:
 
     grafana:
         image: newtoncodes/swarm-grafana:4.6.3
-        ports:
-            - "3000:3000"
         networks:
             - swarm
         volumes:
@@ -164,8 +150,6 @@ services:
 
     unsee:
         image: newtoncodes/swarm-unsee:0.8.0
-        ports:
-            - "3001:8080"
         networks:
             - swarm
         deploy:
@@ -176,3 +160,20 @@ services:
                     memory: 1024M
                 reservations:
                     memory: 128M
+
+    snet:
+        image: newtoncodes/snet
+        ports:
+            - "3000:3000"
+            - "3001:3001"
+            - "3002:3002"
+            - "3003:3003"
+            - "3004:3004"
+        networks:
+            - swarm
+        volumes:
+            -
+        deploy:
+            placement:
+                constraints:
+                    - node.role == manager

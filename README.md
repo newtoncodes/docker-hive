@@ -6,6 +6,15 @@ Docker swarm node/master automated install.
 
 Inspired by: https://github.com/stefanprodan/swarmprom
 
+## Install
+
+```bash
+apt-get install -y git
+mkdir /node
+git clone https://github.com/newtoncodes/swarm.git /node/installer
+bash /node/installer/bin/install
+```
+
 ### Swarm management
 
 | Service | Purpose |
@@ -23,9 +32,8 @@ Inspired by: https://github.com/stefanprodan/swarmprom
 | [Grafana](https://hub.docker.com/r/grafana/grafana/) | Monitoring dashboard |
 
 
-###### TODO: auth
-###### TODO: remove all ports
-###### TODO: snet
+###### TODO: slack
+###### TODO: test 2 nodes
 
 #### Delete all containers (force!! running or stopped containers)
 
