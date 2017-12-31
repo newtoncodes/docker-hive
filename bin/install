@@ -154,36 +154,6 @@ if [ "$SWARM_MASTER" = "yes" ]; then
         cp -r "$DIRNAME/../install/config/swarm" ${INSTALL_PATH}/config/
     fi
 
-    echo "Remove old stack (yes/no, default: no):"
-    read willRm3
-
-    if [ "$willRm3" = "yes" ]; then
-        echo "Removing old swarm stack..."
-
-        docker stack rm swarm
-    fi
-
-    echo "Remove old network (yes/no, default: no):"
-    read willRm3
-
-    if [ "$willRm3" = "yes" ]; then
-        echo "Removing old swarm network..."
-
-        docker network rm swarm
-    fi
-
-    echo "Remove old volumes (yes/no, default: no):"
-    read willRm3
-
-    if [ "$willRm3" = "yes" ]; then
-        echo "Removing old swarm volumes..."
-
-        docker volume rm swarm-portainer
-        docker volume rm swarm-prometheus-alertmanager
-        docker volume rm swarm-prometheus
-        docker volume rm swarm-grafana
-    fi
-
     # Host setting for ElasticSearch
     # sysctl -w vm.max_map_count=262144
 
