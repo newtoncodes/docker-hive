@@ -192,9 +192,9 @@ if [ "$SWARM_MASTER" = "yes" ]; then
     sed -i "s#{{SWARM_PATH}}#$INSTALL_PATH#" ${INSTALL_PATH}/config/swarm/stack.yml
 
     if [ "$SWARM_PORTS" = "yes" ]; then
-        sed -i 's@{{SWARM_PORTS}}@\n            - "3000:3000"\n            - "3001:3001"\n            - "3002:3002"\n            - "3003:3003"\n            - "3004:3004"@' ${INSTALL_PATH}/config/swarm/stack.yml
+        sed -i 's@{{SWARM_PORTS}}@ -p "3000:3000" -p "3001:3001" -p "3002:3002" -p "3003:3003" -p "3004:3004" @' ${INSTALL_PATH}/bin/swarm-snet
     else
-        sed -i 's@{{SWARM_PORTS}}@ @' ${INSTALL_PATH}/config/swarm/stack.yml
+        sed -i 's@{{SWARM_PORTS}}@ @' ${INSTALL_PATH}/bin/swarm-snet
     fi
 
     # Run stack

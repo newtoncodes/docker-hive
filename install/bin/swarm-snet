@@ -16,5 +16,7 @@ docker run \
   --restart always \
   --cap-add=NET_ADMIN \
   --device=/dev/net/tun \
-  --network=swarm -v ${SWARM_PATH}/config/openvpn/enabled_swarm:/etc/snet newtoncodes/swarm-snet:1.0.0
+  --network=swarm -v ${SWARM_PATH}/config/openvpn/enabled_swarm:/etc/snet \
+  {{SWARM_PORTS}} \
+newtoncodes/swarm-snet:1.0.0
 
