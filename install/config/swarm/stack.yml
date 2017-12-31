@@ -117,7 +117,7 @@ services:
         networks:
             - swarm
         volumes:
-            - swarm-prometheus-alertmanager:/prometheus
+            - swarm-prometheus:/prometheus
         deploy:
             mode: replicated
             replicas: 1
