@@ -24,6 +24,9 @@ services:
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - swarm-portainer:/data
+        environment:
+            - ADMIN_USERNAME=${SWARM_ADMIN_USERNAME:-admin}
+            - ADMIN_PASSWORD=${SWARM_ADMIN_PASSWORD:-admin}
         deploy:
             placement:
                 constraints:
