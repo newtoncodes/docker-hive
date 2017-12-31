@@ -8,5 +8,5 @@ COPY start.sh /
 COPY config /etc/alertmanager/
 
 ENTRYPOINT []
-CMD [ "bash", "-l", "/start.sh" ]
+CMD [ "sh", "-l", "/start.sh" ]
 
