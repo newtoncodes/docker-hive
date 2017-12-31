@@ -8,6 +8,7 @@ COPY --from=portainer /portainer /portainer
 COPY --from=portainer /docker /docker
 RUN apk --no-cache --update upgrade && apk --no-cache add bash
 RUN apk --no-cache --update upgrade && apk --no-cache add apache2-utils
+RUN apk --no-cache --update upgrade && apk --no-cache add curl
 
 VOLUME /data
 WORKDIR /
