@@ -88,9 +88,9 @@ services:
         volumes:
             - {{SWARM_PATH}}/alertmanager:/alertmanager
         environment:
-            - SLACK_KEY=${SWARM_SLACK_KEY:-}
-            - SLACK_CHANNEL=${SWARM_SLACK_CHANNEL:-}
-            - SLACK_USERNAME=${SWARM_SLACK_USERNAME:-}
+            - SLACK_KEY=${SWARM_SLACK_KEY:-undefined}
+            - SLACK_CHANNEL=${SWARM_SLACK_CHANNEL:-undefined}
+            - SLACK_USERNAME=${SWARM_SLACK_USERNAME:-undefined}
         deploy:
             mode: replicated
             replicas: 1
