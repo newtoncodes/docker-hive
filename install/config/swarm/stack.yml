@@ -6,9 +6,6 @@ networks:
 
 services:
     portainer:
-        # TODO: auth
-        # TODO: snet
-        # TODO: add versions to all images
         image: newtoncodes/swarm-portainer
         ports:
             - "9000:9000"

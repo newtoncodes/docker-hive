@@ -4,6 +4,7 @@ ENV NODE_ID=none
 ENV NODE_NAME=none
 
 COPY start.sh /
+COPY config /etc/node-exporter
 
 ENTRYPOINT  [ "/start.sh" ]
 CMD [ "--collector.textfile.directory=/etc/node-exporter/", \

@@ -22,3 +22,7 @@ Inspired by: https://github.com/stefanprodan/swarmprom
 | [Alert manager](https://hub.docker.com/r/prom/alertmanager/) | Sends alerts from Prometheus |
 | [Grafana](https://hub.docker.com/r/grafana/grafana/) | Monitoring dashboard |
 
+
+###### TODO: auth
+###### TODO: snet
+###### TODO: add versions to all images
