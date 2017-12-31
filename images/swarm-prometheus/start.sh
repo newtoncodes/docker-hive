@@ -24,7 +24,7 @@ done
 
 fi
 
-rm /etc/prometheus/prometheus.yml
+rm -rf /etc/prometheus/prometheus.yml
 mv /tmp/prometheus.yml /etc/prometheus/prometheus.yml
 
 /bin/prometheus \
