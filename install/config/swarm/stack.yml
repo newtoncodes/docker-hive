@@ -1,5 +1,15 @@
 version: "3.3"
 
+volumes:
+    swarm-portainer:
+        external: true
+    swarm-prometheus-alertmanager:
+        external: true
+    swarm-prometheus:
+        external: true
+    swarm-grafana:
+        external: true
+
 networks:
     swarm:
         external: true
@@ -13,7 +23,7 @@ services:
             - swarm
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
-            - {{SWARM_PATH}}/portainer:/data
+            - swarm-portainer:/data
         deploy:
             placement:
                 constraints:
@@ -83,7 +93,7 @@ services:
         networks:
             - swarm
         volumes:
-            - {{SWARM_PATH}}/alertmanager:/alertmanager
+            - swarm-prometheus-alertmanager:/alertmanager
         environment:
             - SLACK_KEY=${SWARM_SLACK_KEY:-undefined}
             - SLACK_CHANNEL=${SWARM_SLACK_CHANNEL:-undefined}
@@ -107,7 +117,7 @@ services:
         networks:
             - swarm
         volumes:
-            - {{SWARM_PATH}}/prometheus:/prometheus
+            - swarm-prometheus-alertmanager:/prometheus
         deploy:
             mode: replicated
             replicas: 1
@@ -127,7 +137,7 @@ services:
         networks:
             - swarm
         volumes:
-            - {{SWARM_PATH}}/grafana:/var/lib/grafana
+            - swarm-grafana:/var/lib/grafana
         environment:
             - ADMIN_USERNAME=${SWARM_ADMIN_USERNAME:-admin}
             - ADMIN_PASSWORD=${SWARM_ADMIN_PASSWORD:-admin}

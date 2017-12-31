@@ -152,20 +152,26 @@ if [ "$SWARM_MASTER" = "yes" ]; then
         cp -r "$DIRNAME/../install/config/swarm" ${INSTALL_PATH}/config/
     fi
 
-    if [ -d "$INSTALL_PATH/data" ]; then
-        echo "Swarm data exists. Do you want to remove the data (yes/no, default: no):"
-        read willRm3
+    echo "Remove old network (yes/no, default: no):"
+    read willRm3
 
-        if [ "$willRm3" = "yes" ]; then
-            echo "Removing old swarm data..."
+    if [ "$willRm3" = "yes" ]; then
+        echo "Removing old swarm network..."
 
-            rm -rf ${INSTALL_PATH}/data
-        fi
+        docker network rm swarm
     fi
 
-    mkdir -p ${INSTALL_PATH}/data/prometheus
-    mkdir -p ${INSTALL_PATH}/data/alertmanager
-    mkdir -p ${INSTALL_PATH}/data/grafana
+    echo "Remove old volumes (yes/no, default: no):"
+    read willRm3
+
+    if [ "$willRm3" = "yes" ]; then
+        echo "Removing old swarm volumes..."
+
+        docker volume rm swarm-portainer
+        docker volume rm swarm-prometheus-alertmanager
+        docker volume rm swarm-prometheus
+        docker volume rm swarm-grafana
+    fi
 
     # Host setting for ElasticSearch
     # sysctl -w vm.max_map_count=262144
@@ -173,8 +179,14 @@ if [ "$SWARM_MASTER" = "yes" ]; then
     # Init swarm
     docker swarm init
 
-    # Init main networks
+    # Init swarm network
     docker network create -d overlay swarm
+
+    # Init swarm volumes
+    docker volume create swarm-portainer
+    docker volume create swarm-prometheus-alertmanager
+    docker volume create swarm-prometheus
+    docker volume create swarm-grafana
 
     # Replace variables
     HOST_IP=`cut -d'/' -f1 <<< \`ip -o addr show docker_gwbridge | awk '{print $4}'\``
@@ -186,8 +198,6 @@ if [ "$SWARM_MASTER" = "yes" ]; then
     sed -i "s/{{SLACK_KEY}}/$SLACK_KEY/" ${INSTALL_PATH}/config/swarm/vars.sh
     sed -i "s/{{SLACK_USERNAME}}/$SLACK_USERNAME/" ${INSTALL_PATH}/config/swarm/vars.sh
     sed -i "s/{{SLACK_CHANNEL}}/$SLACK_CHANNEL/" ${INSTALL_PATH}/config/swarm/vars.sh
-
-    sed -i "s#{{SWARM_PATH}}#$INSTALL_PATH/data#" ${INSTALL_PATH}/config/swarm/stack.yml
 
     # Run stack
     bash ${INSTALL_PATH}/bin/swarm
