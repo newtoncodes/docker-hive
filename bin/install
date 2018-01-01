@@ -138,12 +138,6 @@ bash ${INSTALL_PATH}/bin/openvpn
 
 /etc/init.d/docker start
 
-HOST_IP=`cut -d'/' -f1 <<< \`ip -o addr show docker_gwbridge | awk '{print $4}'\``
-
-echo "{\"experimental\": true, \"metrics-addr\": \"$HOST_IP:9323\"}" > /etc/docker/daemon.json
-/etc/init.d/docker restart
-
-
 if [ "$SWARM_MASTER" = "yes" ]; then
 
     cp -r "$DIRNAME/../install/bin/swarm" ${INSTALL_PATH}/bin/
@@ -184,6 +178,8 @@ if [ "$SWARM_MASTER" = "yes" ]; then
     docker volume create swarm-grafana-log
     docker volume create swarm-grafana-etc
 
+    HOST_IP=`cut -d'/' -f1 <<< \`ip -o addr show docker_gwbridge | awk '{print $4}'\``
+
     # Replace variables
     sed -i "s/{{HOST_IP}}/$HOST_IP/" ${INSTALL_PATH}/config/swarm/vars.sh
 
@@ -211,4 +207,8 @@ else
     # Init swarm
     docker swarm join --token "$SWARM_TOKEN" "$SWARM_HOST:$SWARM_PORT"
 
+    echo "{\"experimental\": true, \"metrics-addr\": \"$HOST_IP:9323\"}" > /etc/docker/daemon.json
+    /etc/init.d/docker restart
+
 fi
+
