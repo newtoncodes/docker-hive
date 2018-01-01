@@ -31,6 +31,9 @@ if [ "$SWARM_MASTER" = "yes" ]; then
     echo "Slack channel:"
     read SLACK_CHANNEL
 else
+    echo "Is this a manager (yes/no; default: no):"
+    read SWARM_MANAGER
+
     echo "Swarm host:"
     read SWARM_HOST
 
@@ -215,8 +218,13 @@ if [ "$SWARM_MASTER" = "yes" ]; then
 
 else
 
-    cp -r "$DIRNAME/../install/bin/iptables-add-swarm-manager" ${INSTALL_PATH}/bin/
-    chmod +x ${INSTALL_PATH}/bin/iptables-add-swarm-manager
+    if [ "$SWARM_MANAGER" = "yes" ]; then
+        cp -r "$DIRNAME/../install/bin/iptables-add-swarm-worker" ${INSTALL_PATH}/bin/
+        chmod +x ${INSTALL_PATH}/bin/iptables-add-swarm-worker
+    else
+        cp -r "$DIRNAME/../install/bin/iptables-add-swarm-manager" ${INSTALL_PATH}/bin/
+        chmod +x ${INSTALL_PATH}/bin/iptables-add-swarm-manager
+    fi
 
     # Init swarm
     docker swarm join --token "$SWARM_TOKEN" "$SWARM_HOST:$SWARM_PORT"
