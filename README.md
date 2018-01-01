@@ -73,3 +73,9 @@ docker rmi $(docker images -q)
 ```bash
 docker volume rm $(docker volume ls -q -f dangling=true)
 ```
+
+#### Delete all networks
+
+```bash
+docker network rm $(docker network ls)
+```

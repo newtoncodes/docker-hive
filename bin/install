@@ -194,12 +194,12 @@ if [ "$SWARM_MASTER" = "yes" ]; then
 
     sed -i "s/{{HOST_IP}}/$HOST_IP/" ${INSTALL_PATH}/config/swarm/vars.sh
 
-    sed -i "s/{{ADMIN_USERNAME}}/$ADMIN_USERNAME/" ${INSTALL_PATH}/config/swarm/vars.sh
-    sed -i "s/{{ADMIN_PASSWORD}}/$ADMIN_PASSWORD/" ${INSTALL_PATH}/config/swarm/vars.sh
+    sed -i "s^{{ADMIN_USERNAME}}^$ADMIN_USERNAME^" ${INSTALL_PATH}/config/swarm/vars.sh
+    sed -i "s^{{ADMIN_PASSWORD}}^$ADMIN_PASSWORD^" ${INSTALL_PATH}/config/swarm/vars.sh
 
-    sed -i "s^{{SLACK_KEY}}^$SLACK_KEY/" ${INSTALL_PATH}/config/swarm/vars.sh
-    sed -i "s^{{SLACK_USERNAME}}^$SLACK_USERNAME/" ${INSTALL_PATH}/config/swarm/vars.sh
-    sed -i "s^{{SLACK_CHANNEL}}^$SLACK_CHANNEL/" ${INSTALL_PATH}/config/swarm/vars.sh
+    sed -i "s^{{SLACK_KEY}}^$SLACK_KEY^" ${INSTALL_PATH}/config/swarm/vars.sh
+    sed -i "s^{{SLACK_USERNAME}}^$SLACK_USERNAME^" ${INSTALL_PATH}/config/swarm/vars.sh
+    sed -i "s^{{SLACK_CHANNEL}}^$SLACK_CHANNEL^" ${INSTALL_PATH}/config/swarm/vars.sh
 
     sed -i "s#{{SWARM_PATH}}#$INSTALL_PATH#" ${INSTALL_PATH}/config/swarm/stack.yml
 
