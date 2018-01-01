@@ -169,14 +169,6 @@ if [ "$SWARM_MASTER" = "yes" ]; then
     # Init swarm
     docker swarm init
 
-    HOST_IP=`cut -d'/' -f1 <<< \`ip -o addr show docker_gwbridge | awk '{print $4}'\``
-
-    if [ "$HOST_IP" != "" ]; then
-        echo "{\"experimental\": true, \"metrics-addr\": \"$HOST_IP:9323\"}" > /etc/docker/daemon.json
-        bash ${INSTALL_PATH}/bin/iptables
-        /etc/init.d/docker restart
-    fi
-
     # Init swarm network
     docker network create --attachable -d overlay swarm
 
@@ -188,6 +180,16 @@ if [ "$SWARM_MASTER" = "yes" ]; then
     docker volume create swarm-grafana-log
     docker volume create swarm-grafana-etc
 
+    sleep 30
+
+    HOST_IP=`cut -d'/' -f1 <<< \`ip -o addr show docker_gwbridge | awk '{print $4}'\``
+
+    if [ "$HOST_IP" != "" ]; then
+        echo "{\"experimental\": true, \"metrics-addr\": \"$HOST_IP:9323\"}" > /etc/docker/daemon.json
+        bash ${INSTALL_PATH}/bin/iptables
+        /etc/init.d/docker restart
+    fi
+
     # Replace variables
 
     sed -i "s/{{HOST_IP}}/$HOST_IP/" ${INSTALL_PATH}/config/swarm/vars.sh
@@ -195,9 +197,9 @@ if [ "$SWARM_MASTER" = "yes" ]; then
     sed -i "s/{{ADMIN_USERNAME}}/$ADMIN_USERNAME/" ${INSTALL_PATH}/config/swarm/vars.sh
     sed -i "s/{{ADMIN_PASSWORD}}/$ADMIN_PASSWORD/" ${INSTALL_PATH}/config/swarm/vars.sh
 
-    sed -i "s/{{SLACK_KEY}}/$SLACK_KEY/" ${INSTALL_PATH}/config/swarm/vars.sh
-    sed -i "s/{{SLACK_USERNAME}}/$SLACK_USERNAME/" ${INSTALL_PATH}/config/swarm/vars.sh
-    sed -i "s/{{SLACK_CHANNEL}}/$SLACK_CHANNEL/" ${INSTALL_PATH}/config/swarm/vars.sh
+    sed -i "s^{{SLACK_KEY}}^$SLACK_KEY/" ${INSTALL_PATH}/config/swarm/vars.sh
+    sed -i "s^{{SLACK_USERNAME}}^$SLACK_USERNAME/" ${INSTALL_PATH}/config/swarm/vars.sh
+    sed -i "s^{{SLACK_CHANNEL}}^$SLACK_CHANNEL/" ${INSTALL_PATH}/config/swarm/vars.sh
 
     sed -i "s#{{SWARM_PATH}}#$INSTALL_PATH#" ${INSTALL_PATH}/config/swarm/stack.yml
 
@@ -218,6 +220,8 @@ else
 
     # Init swarm
     docker swarm join --token "$SWARM_TOKEN" "$SWARM_HOST:$SWARM_PORT"
+
+    sleep 30
 
     HOST_IP=`cut -d'/' -f1 <<< \`ip -o addr show docker_gwbridge | awk '{print $4}'\``
 
