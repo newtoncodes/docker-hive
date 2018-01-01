@@ -13,6 +13,5 @@ receivers:
     - api_url: 'https://hooks.slack.com/services/{{SLACK_KEY}}'
       username: '{{SLACK_USERNAME}}'
       channel: '{{SLACK_CHANNEL}}'
-      send_resolved: true
-      text: '{{ .CommonAnnotations.summary }} ---> {{ .CommonAnnotations.description }}'
-      icon_emoji: ':dart:'
+      # send_resolved: true # This is nice but sends too many notifications
+      text: '{{ .CommonAnnotations.summary }}: {{ .CommonAnnotations.description }}'
