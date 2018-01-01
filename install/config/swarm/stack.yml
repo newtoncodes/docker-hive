@@ -155,6 +155,9 @@ services:
         deploy:
             mode: replicated
             replicas: 1
+            placement:
+                constraints:
+                    - node.role == manager
             resources:
                 limits:
                     memory: 1024M

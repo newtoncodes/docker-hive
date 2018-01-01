@@ -1572,9 +1572,9 @@
           "sort": 0,
           "tagValuesQuery": "label_values({node_id=\"$tag\"},node_name)",
           "tags": [
-            "weave-worker-1",
-            "weave-worker-2",
-            "weave-manager-1"
+            "worker-1",
+            "worker-2",
+            "manager-1"
           ],
           "tagsQuery": "label_values(node_meta, node_name)",
           "type": "query",
