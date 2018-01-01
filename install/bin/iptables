@@ -36,8 +36,8 @@ fi
 
 
 # Drop by default.
-iptables -A INPUT   -j DROP
-iptables -A OUTPUT  -j ACCEPT
+# iptables -A INPUT   -j DROP
+# iptables -A OUTPUT  -j ACCEPT
 iptables -A FORWARD -j DROP
 
 

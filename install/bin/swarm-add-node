@@ -18,6 +18,10 @@ IP_SSH_REMOTE="${IP}"
 iptables -A INPUT  -p tcp -s "\$IP_SSH_REMOTE" -d "\$IP_EXTERNAL" --dport 2377 -m state --state NEW,ESTABLISHED -j ACCEPT
 iptables -A OUTPUT -p tcp -s "\$IP_EXTERNAL" -d "\$IP_SSH_REMOTE" --sport 2377 -m state --state ESTABLISHED     -j ACCEPT
 
+iptables -A INPUT  -p tcp -s "\$IP_SSH_REMOTE" -d "\$IP_EXTERNAL" --dport 7946 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -p tcp -s "\$IP_EXTERNAL" -d "\$IP_SSH_REMOTE" --sport 7946 -m state --state ESTABLISHED     -j ACCEPT
+
+
 EOF
 
 ln -s ${SWARM_PATH}/config/iptables/available/node-${IP}.sh ${SWARM_PATH}/config/iptables/enabled/node-${IP}.sh
@@ -27,6 +31,9 @@ IP_SSH_REMOTE="${IP}"
 
 iptables -A INPUT  -p tcp -s "$IP_SSH_REMOTE" -d "$IP_EXTERNAL" --dport 2377 -m state --state NEW,ESTABLISHED -j ACCEPT
 iptables -A OUTPUT -p tcp -s "$IP_EXTERNAL" -d "$IP_SSH_REMOTE" --sport 2377 -m state --state ESTABLISHED     -j ACCEPT
+
+iptables -A INPUT  -p tcp -s "$IP_SSH_REMOTE" -d "$IP_EXTERNAL" --dport 7946 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -p tcp -s "$IP_EXTERNAL" -d "$IP_SSH_REMOTE" --sport 7946 -m state --state ESTABLISHED     -j ACCEPT
 
 iptables-save > /tmp/iptables.save
 

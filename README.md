@@ -32,9 +32,6 @@ bash /node/installer/bin/install
 | [Grafana](https://hub.docker.com/r/grafana/grafana/) | Monitoring dashboard |
 
 
-###### TODO: slack
-###### TODO: test 2 nodes
-
 #### Delete all containers (force!! running or stopped containers)
 
 ```bash
