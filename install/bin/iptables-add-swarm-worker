@@ -15,12 +15,12 @@ IP_DOC_REMOTE="${IP}"
 
 
 # DOCKER to a specific IP
-iptables -A INPUT  -p tcp -s "\$IP_DOC_REMOTE" -d "\$IP_EXTERNAL" --dport 2376 ACCEPT
-iptables -A INPUT  -p tcp -s "\$IP_DOC_REMOTE" -d "\$IP_EXTERNAL" --dport 2377 ACCEPT
-iptables -A INPUT  -p tcp -s "\$IP_DOC_REMOTE" -d "\$IP_EXTERNAL" --dport 7946 ACCEPT
+iptables -A INPUT  -p tcp -s "\$IP_DOC_REMOTE" -d "\$IP_EXTERNAL" --dport 2376 -j ACCEPT
+iptables -A INPUT  -p tcp -s "\$IP_DOC_REMOTE" -d "\$IP_EXTERNAL" --dport 2377 -j ACCEPT
+iptables -A INPUT  -p tcp -s "\$IP_DOC_REMOTE" -d "\$IP_EXTERNAL" --dport 7946 -j ACCEPT
 
-iptables -A INPUT  -p udp -s "\$IP_DOC_REMOTE" -d "\$IP_EXTERNAL" --dport 7946 ACCEPT
-iptables -A INPUT  -p udp -s "\$IP_DOC_REMOTE" -d "\$IP_EXTERNAL" --dport 4789 ACCEPT
+iptables -A INPUT  -p udp -s "\$IP_DOC_REMOTE" -d "\$IP_EXTERNAL" --dport 7946 -j ACCEPT
+iptables -A INPUT  -p udp -s "\$IP_DOC_REMOTE" -d "\$IP_EXTERNAL" --dport 4789 -j ACCEPT
 
 
 EOF
@@ -30,12 +30,12 @@ ln -s ${SWARM_PATH}/config/iptables/available/node-worker-${IP}.sh ${SWARM_PATH}
 IP_EXTERNAL=`dig +short myip.opendns.com @resolver1.opendns.com`
 IP_DOC_REMOTE="$IP"
 
-iptables -A INPUT  -p tcp -s "$IP_DOC_REMOTE" -d "$IP_EXTERNAL" --dport 2376 ACCEPT
-iptables -A INPUT  -p tcp -s "$IP_DOC_REMOTE" -d "$IP_EXTERNAL" --dport 2377 ACCEPT
-iptables -A INPUT  -p tcp -s "$IP_DOC_REMOTE" -d "$IP_EXTERNAL" --dport 7946 ACCEPT
+iptables -A INPUT  -p tcp -s "$IP_DOC_REMOTE" -d "$IP_EXTERNAL" --dport 2376 -j ACCEPT
+iptables -A INPUT  -p tcp -s "$IP_DOC_REMOTE" -d "$IP_EXTERNAL" --dport 2377 -j ACCEPT
+iptables -A INPUT  -p tcp -s "$IP_DOC_REMOTE" -d "$IP_EXTERNAL" --dport 7946 -j ACCEPT
 
-iptables -A INPUT  -p udp -s "$IP_DOC_REMOTE" -d "$IP_EXTERNAL" --dport 7946 ACCEPT
-iptables -A INPUT  -p udp -s "$IP_DOC_REMOTE" -d "$IP_EXTERNAL" --dport 4789 ACCEPT
+iptables -A INPUT  -p udp -s "$IP_DOC_REMOTE" -d "$IP_EXTERNAL" --dport 7946 -j ACCEPT
+iptables -A INPUT  -p udp -s "$IP_DOC_REMOTE" -d "$IP_EXTERNAL" --dport 4789 -j ACCEPT
 
 iptables-save > /tmp/iptables.save
 
