@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+SWARM_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SWARM_PATH="$SWARM_PATH/..";
+
+IP=$1
+
+rm -rf ${SWARM_PATH}/config/iptables/enabled/node-master-${IP}.sh
+rm -rf ${SWARM_PATH}/config/iptables/available/node-master-${IP}.sh
+touch ${SWARM_PATH}/config/iptables/available/node-master-${IP}.sh
+cat >>${SWARM_PATH}/config/iptables/available/node-master-${IP}.sh <<EOF
+
+IP_EXTERNAL=`dig +short myip.opendns.com @resolver1.opendns.com`
+IP_DOC_REMOTE="${IP}"
+
+
+# DOCKER to a specific IP
+iptables -A INPUT  -p tcp -s "\$IP_DOC_REMOTE" -d "\$IP_EXTERNAL" --dport 2376 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT  -p tcp -s "\$IP_DOC_REMOTE" -d "\$IP_EXTERNAL" --dport 7946 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+iptables -A INPUT  -p udp -s "\$IP_DOC_REMOTE" -d "\$IP_EXTERNAL" --dport 7946 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT  -p udp -s "\$IP_DOC_REMOTE" -d "\$IP_EXTERNAL" --dport 4789 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+
+EOF
+
+ln -s ${SWARM_PATH}/config/iptables/available/node-master-${IP}.sh ${SWARM_PATH}/config/iptables/enabled/node-master-${IP}.sh
+
+IP_EXTERNAL=`dig +short myip.opendns.com @resolver1.opendns.com`
+IP_DOC_REMOTE="$IP"
+
+iptables -A INPUT  -p tcp -s "$IP_DOC_REMOTE" -d "$IP_EXTERNAL" --dport 2376 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT  -p tcp -s "$IP_DOC_REMOTE" -d "$IP_EXTERNAL" --dport 7946 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+iptables -A INPUT  -p udp -s "$IP_DOC_REMOTE" -d "$IP_EXTERNAL" --dport 7946 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT  -p udp -s "$IP_DOC_REMOTE" -d "$IP_EXTERNAL" --dport 4789 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+iptables-save > /tmp/iptables.save
+
+${SWARM_PATH}/bin/iptables
+
+iptables-restore < /tmp/iptables.save

@@ -146,8 +146,8 @@ if [ "$SWARM_MASTER" = "yes" ]; then
     chmod +x ${INSTALL_PATH}/bin/swarm
     cp -r "$DIRNAME/../install/bin/swarm-snet" ${INSTALL_PATH}/bin/
     chmod +x ${INSTALL_PATH}/bin/swarm-snet
-    cp -r "$DIRNAME/../install/bin/swarm-add-node" ${INSTALL_PATH}/bin/
-    chmod +x ${INSTALL_PATH}/bin/swarm-add-node
+    cp -r "$DIRNAME/../install/bin/iptables-add-swarm-worker" ${INSTALL_PATH}/bin/
+    chmod +x ${INSTALL_PATH}/bin/iptables-add-swarm-worker
 
     if [ -d "$INSTALL_PATH/config/swarm" ]; then
         echo "Swarm config exists. Do you want to remove the configs (yes/no, default: no):"
@@ -211,6 +211,9 @@ if [ "$SWARM_MASTER" = "yes" ]; then
     bash ${INSTALL_PATH}/bin/swarm-snet
 
 else
+
+    cp -r "$DIRNAME/../install/bin/iptables-add-swarm-master" ${INSTALL_PATH}/bin/
+    chmod +x ${INSTALL_PATH}/bin/iptables-add-swarm-master
 
     # Init swarm
     docker swarm join --token "$SWARM_TOKEN" "$SWARM_HOST:$SWARM_PORT"
