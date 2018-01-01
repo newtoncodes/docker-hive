@@ -173,6 +173,7 @@ if [ "$SWARM_MASTER" = "yes" ]; then
 
     if [ "$HOST_IP" != "" ]; then
         echo "{\"experimental\": true, \"metrics-addr\": \"$HOST_IP:9323\"}" > /etc/docker/daemon.json
+        bash ${INSTALL_PATH}/bin/iptables
         /etc/init.d/docker restart
     fi
 
@@ -222,6 +223,7 @@ else
 
     if [ "$HOST_IP" != "" ]; then
         echo "{\"experimental\": true, \"metrics-addr\": \"$HOST_IP:9323\"}" > /etc/docker/daemon.json
+        bash ${INSTALL_PATH}/bin/iptables
         /etc/init.d/docker restart
     fi
 
