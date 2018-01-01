@@ -212,8 +212,8 @@ if [ "$SWARM_MASTER" = "yes" ]; then
 
 else
 
-    cp -r "$DIRNAME/../install/bin/iptables-add-swarm-master" ${INSTALL_PATH}/bin/
-    chmod +x ${INSTALL_PATH}/bin/iptables-add-swarm-master
+    cp -r "$DIRNAME/../install/bin/iptables-add-swarm-manager" ${INSTALL_PATH}/bin/
+    chmod +x ${INSTALL_PATH}/bin/iptables-add-swarm-manager
 
     # Init swarm
     docker swarm join --token "$SWARM_TOKEN" "$SWARM_HOST:$SWARM_PORT"
