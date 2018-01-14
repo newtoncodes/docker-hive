@@ -3,7 +3,7 @@
 const os = require('os');
 const execSync = require('child_process').execSync;
 const {
-    writeFile, mkdir,
+    writeFile, mkdir, exists, unlink,
     askHost, askToken, askAdminUsername, askAdminPassword, askSlackKey, askSlackChannel, askSlackUsername, askPublishPorts
 } = require('../lib');
 
@@ -24,29 +24,9 @@ let updateDockerConfig = async () => {
     
     writeFile('/etc/docker/daemon.json', '{"experimental": true, "metrics-addr": "' + hostIp + ':9323"}');
     exec('/etc/init.d/docker restart');
-}
+};
 
-let stopContainer = (name) => {
-    let id = getContainerId(name);
-    if (!id) return;
-    
-    execSync('docker stop ' + id);
-}
 
-let rmContainer = (name) => {
-    let id = getContainerId(name);
-    
-    if (!id) {
-        try { execSync('docker rm ' + id); } catch (e) {}
-        return;
-    }
-    
-    try { execSync('docker stop ' + id); } catch (e) {}
-    try { execSync('docker rm ' + id); }
-    catch (e) {
-        throw new Error('Could not remove container "' + name + '"');
-    }
-}
 
 let getContainerId = (name) => {
     let id = '';
@@ -58,16 +38,62 @@ let getContainerId = (name) => {
     }
     
     return id;
-}
+};
+
+let stopContainer = (name) => {
+    let res = '';
+    
+    try {
+        res = execSync(`docker stop -v $(docker ps -aq --filter="name=${name}")`);
+    } catch (e) {
+        throw new Error('Could not remove container: ' + name);
+    }
+    
+    if (res.indexOf('"docker stop" requires') !== -1) {
+        //
+    }
+};
+
+let rmContainer = (name) => {
+    stopContainer(name);
+    
+    let res = '';
+    
+    try {
+        res = execSync(`docker rm -v $(docker ps -aq --filter="name=${name}")`);
+    } catch (e) {
+        throw new Error('Could not remove container: ' + name);
+    }
+    
+    if (res.indexOf('"docker rm" requires') !== -1) {
+        //
+    }
+};
 
 let rmContainers = () => {
-    createVolume('hive_portainer');
-    createVolume('hive_alertmanager');
-    createVolume('hive_export-cadvisor');
-    createVolume('hive_grafana');
-    createVolume('hive_grafana-log');
-    createVolume('hive_grafana-etc');
-}
+    rmContainer('hive_portainer');
+    rmContainer('hive_prometheus');
+    rmContainer('hive_alertmanager');
+    rmContainer('hive_export-cadvisor');
+    rmContainer('hive_export-dockerd');
+    rmContainer('hive_export-node');
+    rmContainer('hive_unsee');
+    rmContainer('hive_grafana');
+    rmContainer('hive_snet');
+};
+
+
+let existsVolume = (name) => {
+    let id = '';
+    
+    try {
+        id = (execSync('docker volume ls -q --filter="name=' + name + '"') || '')['toString']('utf8').trim();
+    } catch (e) {
+        id = '';
+    }
+    
+    return id.length > 0;
+};
 
 let createVolume = (name) => {
     if (existsVolume(name)) throw new Error('Volume "' + name + '" already exists.');
@@ -77,7 +103,7 @@ let createVolume = (name) => {
     } catch (e) {
         throw new Error('Could not create volume "' + name + '"');
     }
-}
+};
 
 let rmVolume = (name) => {
     if (!existsVolume(name)) return;
@@ -87,64 +113,84 @@ let rmVolume = (name) => {
     } catch (e) {
         throw new Error('Could not remove volume "' + name + '"');
     }
-}
+};
 
-let existsVolume = (name) => {
+let createVolumes = () => {
+    createVolume('hive_portainer');
+    createVolume('hive_prometheus');
+    createVolume('hive_alertmanager');
+    createVolume('hive_grafana');
+    createVolume('hive_grafana_log');
+    createVolume('hive_grafana_etc');
+};
+
+let rmVolumes = () => {
+    rmVolume('hive_portainer');
+    rmVolume('hive_prometheus');
+    rmVolume('hive_alertmanager');
+    rmVolume('hive_grafana');
+    rmVolume('hive_grafana_log');
+    rmVolume('hive_grafana_etc');
+};
+
+
+let existsNetwork = (name) => {
     let id = '';
     
     try {
-        id = (execSync('volume ls -q --filter="name=' + name + '"') || '')['toString']('utf8').trim();
+        id = (execSync('docker network ls -q --filter="name=' + name + '"') || '')['toString']('utf8').trim();
     } catch (e) {
         id = '';
     }
     
     return id.length > 0;
-}
+};
 
-let createVolumes = () => {
-    createVolume('hive_portainer');
-    createVolume('hive_prometheus-alertmanager');
-    createVolume('hive_prometheus');
-    createVolume('hive_grafana');
-    createVolume('hive_grafana-log');
-    createVolume('hive_grafana-etc');
-}
+let createNetwork = (name) => {
+    if (existsNetwork(name)) throw new Error('Network "' + name + '" already exists.');
+    
+    try {
+        exec('docker network create --attachable -d overlay ' + name);
+    } catch (e) {
+        throw new Error('Could not create network "' + name + '"');
+    }
+};
 
-let rmVolumes = () => {
-    rmVolume('hive_portainer');
-    rmVolume('hive_prometheus-alertmanager');
-    rmVolume('hive_prometheus');
-    rmVolume('hive_grafana');
-    rmVolume('hive_grafana-log');
-    rmVolume('hive_grafana-etc');
-}
+let rmNetwork = (name) => {
+    if (!existsNetwork(name)) return;
+    
+    try {
+        exec('docker network rm ' + name);
+    } catch (e) {
+        throw new Error('Could not remove network "' + name + '"');
+    }
+};
+
+let createNetworks = () => {
+    createNetwork('hive');
+};
+
+let rmNetworks = () => {
+    rmNetwork('hive');
+};
+
 
 const installer = {
-    join: async (host, token) => {
-        host = askHost(host);
-        token = askToken(token);
-        
-        mkdir('/etc/docker-hive');
-        writeFile('/etc/docker-hive/vars.env', `
-HOST="${host}"
-TOKEN="${token}"
-`);
-        
-        exec('docker swarm join --token "' + token + '" "' + host + ':2377"');
-        
-        await updateDockerConfig();
-    },
-    
     init: async () => {
-        let adminUsername = askAdminUsername();
-        let adminPassword = askAdminPassword();
+        if (exists('/etc/docker-hive/swarm.env')) throw new Error('Already in a swarm. Run hive leave first.');
     
-        let slackKey = askSlackKey();
-        let slackChannel = askSlackChannel();
-        let slackUsername = askSlackUsername();
-        let publishPorts = askPublishPorts();
+        let vars = {};
+        if (exists('/etc/docker-hive/vars.env')) {
+            let vars = getVars();
+        }
         
-        mkdir('/etc/docker-hive');
+        let adminUsername = askAdminUsername(vars['ADMIN_USERNAME']);
+        let adminPassword = askAdminPassword(vars['ADMIN_PASSWORD']);
+        let slackKey = askSlackKey(vars['SLACK_KEY']);
+        let slackChannel = askSlackChannel(vars['SLACK_CHANNEL']);
+        let slackUsername = askSlackUsername(vars['SLACK_USERNAME']);
+        let publishPorts = askPublishPorts(vars['PUBLISH']);
+        
         writeFile('/etc/docker-hive/vars.env', `
 ADMIN_USERNAME="${adminUsername}"
 ADMIN_PASSWORD="${adminPassword}"
@@ -153,37 +199,55 @@ SLACK_KEY="${slackKey}"
 SLACK_CHANNEL="${slackChannel}"
 SLACK_USERNAME="${slackUsername}"
 
-PUBLISH="${publishPorts}"
+PUBLISH="${publishPorts === 'yes' ? '1' : '0'}"
 `);
         
         exec('docker swarm init');
-        
-        exec('docker network create --attachable -d overlay hive');
-        
     
+        createNetworks();
+        createVolumes();
+        
         await updateDockerConfig();
+        
+        console.log('Done.');
+    },
+    
+    join: async (host, token) => {
+        if (exists('/etc/docker-hive/swarm.env')) throw new Error('Already in a swarm. Run hive leave first.');
+        
+        host = askHost(host);
+        token = askToken(token);
+        
+        mkdir('/etc/docker-hive');
+        writeFile('/etc/docker-hive/swarm.env', `
+HOST="${host}"
+TOKEN="${token}"
+`);
+        
+        exec('docker swarm join --token "' + token + '" "' + host + ':2377"');
+        
+        await updateDockerConfig();
+        
+        console.log('Done.');
     },
     
     leave: async () => {
-        exec('docker stack rm hive');
-        rmContainers()
-        
-        exec('docker volume rm hive-portainer');
-        exec('docker volume rm hive-prometheus-alertmanager');
-        exec('docker volume rm hive-prometheus');
-        exec('docker volume rm hive-grafana');
-        exec('docker volume rm hive-grafana-log');
-        exec('docker volume rm hive-grafana-etc');
+        rmContainers();
+        rmNetworks();
+        rmVolumes();
+    
+        unlink('/etc/docker-hive/swarm.env');
+    
+        exec('docker swarm leave --force');
     },
     
     reinstall: async () => {
-        exec('docker volume rm hive-portainer');
-        exec('docker volume rm hive-prometheus-alertmanager');
-        exec('docker volume rm hive-prometheus');
-        exec('docker volume rm hive-grafana');
-        exec('docker volume rm hive-grafana-log');
-        exec('docker volume rm hive-grafana-etc');
-        
+        rmContainers();
+        rmNetworks();
+        rmVolumes();
+    
+        createNetworks();
+        createVolumes();
     }
 };
 
