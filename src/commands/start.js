@@ -1,17 +1,36 @@
 'use strict';
 
-const {exec, getVars} = require('../lib');
+const execSync = require('child_process').execSync;
+const {exec, getVars, version, readFile, writeFile} = require('../lib');
 
-getVars();
 
 module.exports = {
     start: async () => {
-        exec('docker stack deploy --compose-file /etc/docker-hive/stack.yml --with-registry-auth hive');
+        let ports = '';
+        let config = getVars();
+    
+        let hostIp = null;
+        try {
+            hostIp = execSync('cut -d\'/\' -f1 <<< `ip -o addr show docker_gwbridge | awk \'{print $4}\'`');
+        } catch (e) {
+            hostIp = null;
+        }
+    
+        if (!hostIp) throw new Error('Cannot find docker_gwbridge interface.');
         
-        /*
-        docker stop $(docker ps -a -q --filter="name=hive_snet")
-docker rm $(docker ps -a -q --filter="name=hive_snet")
-         */
-        exec('docker run --name hive_snet --detach --hostname snet --restart always --cap-add=NET_ADMIN --device=/dev/net/tun --network=hive -v ${SWARM_PATH}/config/openvpn/enabled_hive:/etc/snet {{SWARM_PORTS}} newtoncodes/hive-snet:1.0.0')
+        if (config['PUBLISH']) {
+            ports = ' -p "3000:3000" -p "3001:3001" -p "3002:3002" -p "3003:3003" -p "3004:3004"';
+        }
+        
+        let yml = readFile(__dirname + '/../tpl/stack.yml', 'utf8').replace(/{{VERSION}}/g, version).replace(/{{HOST_IP}}/g, hostIp);
+        
+        for (let key of Object.keys(config)) {
+            yml = yml.replace(new RegExp('{{' + key + '}}', 'g'), config[key]);
+        }
+    
+        writeFile('/etc/docker-hive/stack.yml', yml);
+        
+        exec('docker stack deploy --compose-file /etc/docker-hive/stack.yml --with-registry-auth hive');
+        exec('docker run --name hive_snet --detach --hostname snet --restart always --cap-add=NET_ADMIN --device=/dev/net/tun --network=hive -v /etc/docker-hive/vpn:/etc/snet' + ports + ' newtoncodes/hive-snet:' + version)
     }
 };

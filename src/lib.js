@@ -107,5 +107,7 @@ const lib = {
     exec: (cmd) => (exec(cmd, {stdio: 'inherit'}) || '')['toString']('utf8'),
 };
 
+//askHost, askToken, askAdminUsername, askAdminPassword, askSlackKey, askSlackChannel, askSlackUsername, askPublishPorts
+
 
 module.exports = lib;

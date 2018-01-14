@@ -4,9 +4,9 @@ const {exec} = require('../lib');
 
 
 module.exports = {
-    stop: async () => {
-        console.log('Stopping hive...');
+    sync: async () => {
+        console.log('Syncing hive...');
         
-        exec('docker stack rm hive');
+        // TODO
     }
 };
