@@ -1,0 +1,39 @@
+{
+  "name": "docker-hive",
+  "version": "1.0.0",
+  "description": "Preconfigured docker swarm. Portainer GUI. Built-in monitoring stack with prometheus and grafana.",
+  "keywords": [
+    "docker",
+    "swarm",
+    "prometheus",
+    "grafana",
+    "portainer",
+    "unsee",
+    "alertmanager",
+    "cadvisor",
+    "dockerd"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/newtoncodes/docker-hive"
+  },
+  "bugs": {
+    "url": "https://github.com/newtoncodes/docker-hive"
+  },
+  "homepage": "https://github.com/newtoncodes/docker-hive",
+  "author": "Christian Nikolov <christian@newton.codes> (https://github.com/newtoncodes)",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "=4.0.0",
+    "yargs": "=10.0.3"
+  },
+  "scripts": {
+    "build-image": "node ./bin/dev/build.js",
+    "push-image": "npm run build-image && node ./bin/dev/push.js",
+    "publish": "npm run push-image"
+  },
+  "bin": {
+    "docker-hive": "bin/app.js",
+    "hive": "bin/app.js"
+  }
+}

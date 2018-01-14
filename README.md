@@ -79,3 +79,6 @@ docker volume rm $(docker volume ls -q -f dangling=true)
 ```bash
 docker network rm $(docker network ls)
 ```
+
+
+TODO: vpn sync
