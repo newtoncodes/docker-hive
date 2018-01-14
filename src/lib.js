@@ -34,6 +34,22 @@ const lib = {
         return dotenv.parse(readFile(lib.getVarsPath(name)));
     },
     
+    getNodes: () => {
+        if (!exists('/etc/docker-hive/nodes.json')) throw new Error('Configs are missing. Please install first.');
+    
+        let ips = readFile('/etc/docker-hive/nodes.json', 'utf8');
+        ips = ips || '[]';
+        try {
+            ips = JSON.parse(ips);
+        } catch (e) {
+            ips = [];
+        }
+    
+        if (!Array.isArray(ips)) throw new Error('Invalid config: nodes.json');
+        
+        return ips;
+    },
+    
     vpnExists: (v) => exists(lib.getVarsPath(v)),
     
     ask: async (question, validate, initial) => {

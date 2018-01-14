@@ -42,7 +42,7 @@ module.exports = {
             ips.splice(i, 1);
             i = ips.indexOf(ip);
         }
-    
+        
         writeFile('/etc/docker-hive/nodes.json', JSON.stringify(ips, null, 4));
         
         console.log('Node removed.');
