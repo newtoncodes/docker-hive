@@ -181,6 +181,14 @@ class Hive {
         saveNodes(nodes);
         
         console.log('Node added.');
+        
+        if (this._config.iptablesCallback) {
+            try {
+                exec(this._config.iptablesCallback);
+            } catch (e) {
+                return console.error('Error executing iptables callback: ' + this._config.iptablesCallback);
+            }
+        }
     }
     
     async rmNode(ip) {
@@ -198,6 +206,14 @@ class Hive {
         saveNodes(nodes);
     
         console.log('Node removed.');
+    
+        if (this._config.iptablesCallback) {
+            try {
+                exec(this._config.iptablesCallback);
+            } catch (e) {
+                return console.error('Error executing iptables callback: ' + this._config.iptablesCallback);
+            }
+        }
     }
     
     async lsNodes() {
