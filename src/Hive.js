@@ -358,7 +358,7 @@ const saveNodes = (nodes) => {
 };
 
 const getToken = (type) => {
-    let o = (exec('docker swarm join-token ' + type) || '')['toString']('utf8');
+    let o = (exec('docker swarm join-token ' + type) || '', {stdio: [null, null, null])['toString']('utf8');
     let oo = o.match(/docker swarm join --token ([^\s]+) ([^:]+):(\d+)/);
     if (!oo) throw new Error('Could not get the token.');
     
@@ -373,10 +373,10 @@ let stopContainer = (name) => {
     let res = '';
     
     try {
-        res = exec(`docker stop $(docker ps -aq --filter="name=${name}")`);
+        res = exec(`docker stop $(docker ps -aq --filter="name=${name}")`, {stdio: [null, null, null]});
     } catch (e) {
-        console.log(e.stderr, e.stdout);
-        if (e.stderr.indexOf('requires at least 1 argument.') > 0) {
+        console.log(e.stderr['toString']('utf8'));
+        if (e.stderr['toString']('utf8').indexOf('requires at least 1 argument.') > 0) {
             console.info('FOUND NOW');
             return;
         }
@@ -395,10 +395,10 @@ let rmContainer = (name) => {
     let res = '';
     
     try {
-        res = exec(`docker rm -v $(docker ps -aq --filter="name=${name}")`);
+        res = exec(`docker rm -v $(docker ps -aq --filter="name=${name}")`, {stdio: [null, null, null]});
     } catch (e) {
-        console.log(e.stderr, e.stdout);
-        if (e.stderr.indexOf('requires at least 1 argument.') > 0) {
+        console.log(e.stderr['toString']('utf8'));
+        if (e.stderr['toString']('utf8').indexOf('requires at least 1 argument.') > 0) {
             console.info('FOUND NOW');
             return;
         }
