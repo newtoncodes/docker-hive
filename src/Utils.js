@@ -32,7 +32,7 @@ const lib = {
     },
     
     post: async (host, path, data) => {
-        await new Promise((resolve, reject) => {
+        return await new Promise((resolve, reject) => {
             let responded = false;
             let result = '';
             
@@ -68,7 +68,7 @@ const lib = {
     },
     
     get: async (host, path) => {
-        await new Promise((resolve, reject) => {
+        return await new Promise((resolve, reject) => {
             let responded = false;
             let result = '';
             
