@@ -22,4 +22,4 @@ else
     sudo update-rc.d docker-hive defaults
 fi
 
-/etc/init.d/docker-hive/start
+/etc/init.d/docker-hive start
