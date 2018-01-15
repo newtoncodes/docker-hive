@@ -224,10 +224,10 @@ class Hive {
                 }
             }
             
-            setTimeout(() => sync().then(() => {}).catch(e => {}), 5000);
+            setTimeout(() => sync().then(() => {}).catch(() => {}), 5000);
         };
         
-        sync().then(() => {}).catch(e => {});
+        sync().then(() => {}).catch(() => {});
     }
     
     async serve() {
