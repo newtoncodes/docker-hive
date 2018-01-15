@@ -1,32 +1,25 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-name="$(uname -s)"
-case "${name}" in
-    Linux*)  os=Linux;;
-    Darwin*) os=Mac;;
-    CYGWIN*) os=Cygwin;;
-    MINGW*)  os=MinGw;;
-    *)       os=Windows
-esac
+echo "Installing..."
 
-if [ "$os" = "Linux" ]; then
+set -e
 
-    sudo apt-get update
-    sudo apt-get install -y apt-transport-https software-properties-common curl
+dir=$(dirname "$0")
 
-    if [ ! -f "/usr/bin/docker" ]; then
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-        sudo apt-key fingerprint 0EBFCD88
-        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo cp -f ${dir}/init.sh /etc/init.d/docker-hive
+sudo chmod +x /etc/init.d/docker-hive
 
-        sudo apt-get update
-        sudo apt-get install -y docker-ce
-        sudo apt-cache madison docker-ce
-    fi
+set +e
 
-    if [ ! -f "/usr/local/bin/docker-compose" ]; then
-        sudo curl -L https://github.com/docker/compose/releases/download/1.18.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
-        sudo chmod +x /usr/local/bin/docker-compose
-    fi
+res=$(which chkconfig)
 
+set -e
+
+if [ "$res" != "" ]; then
+    sudo chkconfig --add docker-hive
+    sudo chkconfig --level 2345 docker-hive on
+else
+    sudo update-rc.d docker-hive defaults
 fi
+
+/etc/init.d/docker-hive/start

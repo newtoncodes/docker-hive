@@ -237,7 +237,7 @@ const commands = {
         builder: (yargs) => yargs,
         
         handler: () => {
-            exec('bash ' + __dirname + '/install.sh', {stdio: 'inherit'});
+            exec('bash ' + __dirname + '/install-dependencies.sh', {stdio: 'inherit'});
             process.exit(0);
         }
     },

@@ -131,6 +131,8 @@ gateway=${gateway}
         chmod('/etc/docker-hive/env.conf', 0o600);
         
         console.log('Swarm created.');
+    
+        exec(__dirname + '/../bin/install.sh', {stdio: 'inherit'});
     }
     
     async join (type, host, iface) {
@@ -199,6 +201,8 @@ gateway=${gateway}
         chmod('/etc/docker-hive/env.conf', 0o600);
         
         console.log('Joined to swarm successfully.');
+    
+        exec(__dirname + '/../bin/install.sh', {stdio: 'inherit'});
     }
     
     async leave() {
@@ -218,6 +222,8 @@ gateway=${gateway}
         if (exists('/etc/docker-hive/env.conf')) unlink('/etc/docker-hive/env.conf');
         if (exists('/etc/docker-hive/nodes')) unlink('/etc/docker-hive/nodes');
         exec('docker swarm leave --force');
+    
+        exec('/etc/init.d/docker-hive stop', {stdio: 'inherit'});
         
         console.log('Left the swarm successfully.');
     }
