@@ -81,4 +81,5 @@ docker network rm $(docker network ls)
 ```
 
 
-TODO: vpn sync
+TODO: readme
+TODO: ask for ip on node add/remove

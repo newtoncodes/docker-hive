@@ -147,7 +147,7 @@ gateway=${gateway}
         }
         
         type = await askType(type);
-        host = await askHost(host);
+        host = await askHost2(host);
         iface = await askIface(iface);
         
         let iptablesCallback = await askIptablesCallback(config['iptablesCallback']);
@@ -259,7 +259,13 @@ const askType = async (initial) => {
 };
 
 const askHost = async (initial) => {
-    return await Utils.ask(`Public interface to advertise${initial ? ` (${initial})` : ''}: `, n => {
+    return await Utils.ask(`Public IPv4 address to advertise${initial ? ` (${initial})` : ''}: `, n => {
+        return (n && !!n.match(/^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/));
+    }, undefined, initial);
+};
+
+const askHost2 = async (initial) => {
+    return await Utils.ask(`Public IPv4 address of the master node${initial ? ` (${initial})` : ''}: `, n => {
         return (n && !!n.match(/^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/));
     }, undefined, initial);
 };
@@ -335,7 +341,7 @@ const askIface = async (iface) => {
     
     if (!iface && interfaces.length === 1) iface = interfaces[0];
     
-    return await Utils.ask(`Please enter the public interface to advertise${iface ? ` (${iface})` : ''}: `, n => {
+    return await Utils.ask(`Public network interface to advertise${iface ? ` (${iface})` : ''}: `, n => {
         return (n && interfaces.includes(n));
     }, null, iface);
 };
