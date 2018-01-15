@@ -139,7 +139,7 @@ class Hive {
     
         console.log('Stopping hive...');
     
-        console.log('Stopping hive_snet');
+        console.log('Removing service hive_snet');
         rmContainer('hive_snet');
         
         let ls = (exec('docker stack ls') || '')['toString']('utf8').trim();
