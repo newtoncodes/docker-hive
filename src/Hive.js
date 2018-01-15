@@ -116,32 +116,20 @@ class Hive {
         yml = yml.replace(/{{SLACK_USERNAME}}/g, this._config.slackUsername);
         
         writeFile('/etc/docker-hive/stack.yml', yml);
-    
-        exec('docker stack deploy --compose-file /etc/docker-hive/stack.yml --with-registry-auth hive', {stdio: 'inherit'});
         
         rmContainer('hive_snet');
         try {
             console.log('Creating service hive_snet');
-            exec('docker run --name hive_snet --detach --hostname snet --restart always --cap-add=NET_ADMIN --device=/dev/net/tun --network=hive -v /etc/docker-hive/vpn:/etc/snet' + ports + ' newtoncodes/hive-snet:' + version);
+            exec(
+                'docker run --name hive_snet --detach --hostname snet --restart always --cap-add=NET_ADMIN --device=/dev/net/tun --network=hive -v /etc/docker-hive/vpn:/etc/snet' + ports + ' newtoncodes/hive-snet:' + version,
+                {stdio: ['pipe', 'pipe', 'pipe']}
+            );
         } catch (e) {
-            let ls = (exec('docker stack ls') || '')['toString']('utf8').trim();
-    
-            if (ls.match(/(^|\n|\s)hive(\s|\n)/m)) {
-                exec('docker stack rm hive');
-            }
-            
-            rmContainer('hive_portainer');
-            rmContainer('hive_prometheus');
-            rmContainer('hive_alertmanager');
-            rmContainer('hive_export-cadvisor');
-            rmContainer('hive_export-dockerd');
-            rmContainer('hive_export-node');
-            rmContainer('hive_unsee');
-            rmContainer('hive_grafana');
-            
             console.log('Failed to start snet service.');
             return;
         }
+    
+        exec('docker stack deploy --compose-file /etc/docker-hive/stack.yml --with-registry-auth hive', {stdio: 'inherit'});
         
         console.log('Hive started.');
     }
