@@ -120,8 +120,28 @@ class Hive {
         exec('docker stack deploy --compose-file /etc/docker-hive/stack.yml --with-registry-auth hive', {stdio: 'inherit'});
         
         rmContainer('hive_snet');
-        exec('docker run --name hive_snet --detach --hostname snet --restart always --cap-add=NET_ADMIN --device=/dev/net/tun --network=hive -v /etc/docker-hive/vpn:/etc/snet' + ports + ' newtoncodes/hive-snet:' + version, {stdio: 'inherit'});
+        try {
+            exec('docker run --name hive_snet --detach --hostname snet --restart always --cap-add=NET_ADMIN --device=/dev/net/tun --network=hive -v /etc/docker-hive/vpn:/etc/snet' + ports + ' newtoncodes/hive-snet:' + version, {stdio: 'inherit'});
+        } catch (e) {
+            let ls = (exec('docker stack ls') || '')['toString']('utf8').trim();
     
+            if (ls.match(/(^|\n|\s)hive(\s|\n)/m)) {
+                exec('docker stack rm hive');
+            }
+            
+            rmContainer('hive_portainer');
+            rmContainer('hive_prometheus');
+            rmContainer('hive_alertmanager');
+            rmContainer('hive_export-cadvisor');
+            rmContainer('hive_export-dockerd');
+            rmContainer('hive_export-node');
+            rmContainer('hive_unsee');
+            rmContainer('hive_grafana');
+            
+            console.log('Failed to start snet service.');
+            return;
+        }
+        
         console.log('Hive started.');
     }
     
@@ -129,7 +149,7 @@ class Hive {
         this._checkMaster();
     
         console.log('Stopping hive...');
-    
+        
         let ls = (exec('docker stack ls') || '')['toString']('utf8').trim();
         
         if (ls.match(/(^|\n|\s)hive(\s|\n)/m)) {
@@ -358,7 +378,7 @@ const saveNodes = (nodes) => {
 };
 
 const getToken = (type) => {
-    let o = (exec('docker swarm join-token ' + type) || '')['toString']('utf8');
+    let o = (exec('docker swarm join-token ' + type, {stdio: ['pipe', 'pipe', 'pipe']}) || '')['toString']('utf8');
     let oo = o.match(/docker swarm join --token ([^\s]+) ([^:]+):(\d+)/);
     if (!oo) throw new Error('Could not get the token.');
     
@@ -370,10 +390,8 @@ const getToken = (type) => {
 };
 
 let stopContainer = (name) => {
-    let res = '';
-    
     try {
-        res = exec(`docker stop $(docker ps -aq --filter="name=${name}")`);
+        exec(`docker stop $(docker ps -aq --filter="name=${name}")`, {stdio: ['pipe', 'pipe', 'pipe']});
     } catch (e) {
         if (e.stderr['toString']('utf8').indexOf('requires at least 1 argument.') > 0) {
             return;
@@ -386,10 +404,8 @@ let stopContainer = (name) => {
 let rmContainer = (name) => {
     stopContainer(name);
     
-    let res = '';
-    
     try {
-        res = exec(`docker rm -v $(docker ps -aq --filter="name=${name}")`);
+        exec(`docker rm -v $(docker ps -aq --filter="name=${name}")`, {stdio: ['pipe', 'pipe', 'pipe']});
     } catch (e) {
         if (e.stderr['toString']('utf8').indexOf('requires at least 1 argument.') > 0) {
             return;
