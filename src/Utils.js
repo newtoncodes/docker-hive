@@ -103,7 +103,7 @@ const lib = {
     },
     
     encrypt: (text, password) => {
-        let cipher = crypto.createCipher('aes-256-ctr', password);
+        let cipher = crypto.createCipheriv('aes-256-ctr', password);
         let encrypted = cipher.update(text,'utf8','hex');
         encrypted += cipher['final']('hex');
         
@@ -111,7 +111,7 @@ const lib = {
     },
     
     decrypt: (text, password) => {
-        let decipher = crypto.createDecipher('aes-256-ctr', password);
+        let decipher = crypto.createCipheriv('aes-256-ctr', password);
         let dec = decipher.update(text,'hex','utf8');
         dec += decipher['final']('utf8');
         
