@@ -121,7 +121,7 @@ class Hive {
         
         rmContainer('hive_snet');
         try {
-            console.log('Starting service hive_snet...');
+            console.log('Creating service hive_snet');
             exec('docker run --name hive_snet --detach --hostname snet --restart always --cap-add=NET_ADMIN --device=/dev/net/tun --network=hive -v /etc/docker-hive/vpn:/etc/snet' + ports + ' newtoncodes/hive-snet:' + version);
         } catch (e) {
             let ls = (exec('docker stack ls') || '')['toString']('utf8').trim();
