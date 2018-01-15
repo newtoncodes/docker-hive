@@ -123,7 +123,7 @@ iptablesCallback="${iptablesCallback}"
         writeFile('/etc/docker/daemon.json', '{"experimental": true, "metrics-addr": "' + gateway + ':9323"}');
         exec('service docker restart', {stdio: 'inherit'});
         
-        writeFile('/etc/docker-hive/env.conf', `
+        writeFile('/etc/docker-hive/env.conf', `# Environment variables. Please don't change these manually.
 type=master
 host=${host}
 gateway=${gateway}
@@ -193,7 +193,7 @@ iptablesCallback="${iptablesCallback}"
         writeFile('/etc/docker/daemon.json', '{"experimental": true, "metrics-addr": "' + gateway + ':9323"}');
         exec('/etc/init.d/docker restart');
         
-        writeFile('/etc/docker-hive/env.conf', `
+        writeFile('/etc/docker-hive/env.conf', `# Environment variables. Please don't change these manually.
 type=${type}
 host=${host}
 gateway=${gateway}
