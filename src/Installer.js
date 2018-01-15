@@ -120,7 +120,7 @@ iptablesCallback="${iptablesCallback}"
         writeFile('/etc/docker-hive/env.conf', `
 type=master
 host=${host}
-host=${gateway}
+gateway=${gateway}
 `);
         chmod('/etc/docker-hive/env.conf', 0o600);
         
@@ -181,7 +181,7 @@ iptablesCallback="${iptablesCallback}"
         writeFile('/etc/docker-hive/env.conf', `
 type=${type}
 host=${host}
-host=${gateway}
+gateway=${gateway}
 `);
         chmod('/etc/docker-hive/env.conf', 0o600);
         
