@@ -93,8 +93,11 @@ iptablesCallback="${iptablesCallback}"
     
         try {exec('docker swarm leave --force');} catch (e) {}
         exec('docker swarm init --advertise-addr ' + host);
-    
+        
         let gateway = await getGateway();
+        
+        console.log(gateway);
+        console.log('ntwork...');
     
         rmVolume('hive_portainer');
         rmVolume('hive_prometheus');
@@ -104,6 +107,8 @@ iptablesCallback="${iptablesCallback}"
         rmVolume('hive_grafana_etc');
         
         rmNetwork('hive');
+    
+        console.log('volume...');
     
         createNetwork('hive');
         
@@ -115,7 +120,9 @@ iptablesCallback="${iptablesCallback}"
         createVolume('hive_grafana_etc');
         
         writeFile('/etc/docker/daemon.json', '{"experimental": true, "metrics-addr": "' + gateway + ':9323"}');
-        exec('service docker restart');
+        exec('service docker restart', {stdio: 'inherit'});
+        
+        console.log('asd');
     
         writeFile('/etc/docker-hive/env.conf', `
 type=master
