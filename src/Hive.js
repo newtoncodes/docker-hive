@@ -255,7 +255,7 @@ class Hive {
                 try {
                     if (path === 'nodes') {
                         response.writeHead(200);
-                        response.end(Utils.encrypt(JSON.stringify(getNodes()), this._config.apiSecret));
+                        response.end(Utils.encrypt(JSON.stringify([this._host].concat(getNodes())), this._config.apiSecret));
                     }
                     else if (path === 'token-worker') {
                         response.writeHead(200);
@@ -276,7 +276,7 @@ class Hive {
         });
     
         await new Promise((resolve, reject) => {
-            this._server.listen(4876, this._host, error => {
+            this._server.listen(4876, error => {
                 if (error) return reject(error);
                 console.log('Listening...');
                 resolve();
