@@ -160,7 +160,10 @@ const commands = {
         
         builder: (yargs) => yargs,
         
-        handler: () => resolve(() => (new Installer()).reset())
+        handler: () => resolve(async () => {
+            await (new Hive()).stop();
+            await (new Installer()).reset();
+        })
     },
     start: {
         command: 'start',
