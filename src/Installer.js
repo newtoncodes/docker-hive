@@ -202,8 +202,8 @@ host=${gateway}
             rmNetwork('hive');
         }
     
-        unlink('/etc/docker-hive/env.conf');
-        unlink('/etc/docker-hive/nodes');
+        if (exists('/etc/docker-hive/env.conf')) unlink('/etc/docker-hive/env.conf');
+        if (exists('/etc/docker-hive/nodes')) unlink('/etc/docker-hive/nodes');
         exec('docker swarm leave --force');
     }
     
