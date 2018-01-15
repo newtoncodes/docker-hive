@@ -3,7 +3,6 @@
 const http = require('http');
 const crypto = require('crypto');
 const exists = require('fs').existsSync;
-const readInput = require('read-input');
 const readline = require('readline');
 const W_OK = require('fs').W_OK;
 const access = require('fs').accessSync;
@@ -119,10 +118,6 @@ const lib = {
         dec += decipher['final']('utf8');
         
         return dec;
-    },
-    
-    readInput: async () => {
-        return (await readInput([])).data;
     },
     
     isWritable: (file) => {
