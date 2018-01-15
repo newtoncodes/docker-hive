@@ -83,3 +83,4 @@ docker network rm $(docker network ls)
 
 TODO: readme
 TODO: ask for ip on node add/remove
+TODO: serve/sync automatically

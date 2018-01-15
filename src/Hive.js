@@ -209,7 +209,7 @@ class Hive {
             let nodes = null;
             
             try {
-                nodes = await Utils.post(this._host, '/nodes', this._config.apiKey);
+                nodes = await Utils.post(this._host, 4876, '/nodes', this._config.apiKey);
             } catch (e) {
                 return console.error('Sync error: Cannot connect to server.');
             }

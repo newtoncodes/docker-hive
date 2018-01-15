@@ -31,14 +31,14 @@ const lib = {
         return a;
     },
     
-    post: async (host, path, data) => {
+    post: async (host, port, path, data) => {
         return await new Promise((resolve, reject) => {
             let responded = false;
             let result = '';
             
             let request = http.request({
                 host: host,
-                port: 80,
+                port: port,
                 path: path,
                 method: 'POST'
             }, res => {
@@ -67,14 +67,14 @@ const lib = {
         });
     },
     
-    get: async (host, path) => {
+    get: async (host, port, path) => {
         return await new Promise((resolve, reject) => {
             let responded = false;
             let result = '';
             
             let request = http.request({
                 host: host,
-                port: 80,
+                port: port,
                 path: path,
                 method: 'GET'
             }, res => {

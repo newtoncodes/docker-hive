@@ -51,7 +51,7 @@ class Installer {
         }
         
         try {
-            if (!host) host = await Utils.get('api.ipify.org', '/');
+            if (!host) host = await Utils.get('api.ipify.org', 80, '/');
         } catch (e) {}
         
         host = await askHost(host);
@@ -168,7 +168,7 @@ iptablesCallback="${iptablesCallback}"
         
         let token = null;
         try {
-            await Utils.post(host, '/token-' + type, apiKey);
+            await Utils.post(host, 4876, '/token-' + type, apiKey);
         } catch (e) {
             throw new Error('Cannot get token. Check your host address.');
         }
