@@ -105,7 +105,7 @@ class Hive {
             ports = ' -p "3000:3000" -p "3001:3001" -p "3002:3002" -p "3003:3003" -p "3004:3004"';
         }
     
-        let yml = readFile(__dirname + '/../tpl/stack.yml', 'utf8');
+        let yml = readFile(__dirname + '/tpl/stack.yml', 'utf8');
         
         yml = yml.replace(/{{VERSION}}/g, version);
         yml = yml.replace(/{{GATEWAY}}/g, this._gateway);
