@@ -72,7 +72,8 @@ class Installer {
         let slackChannel = await askSlackChannel(config['slackChannel']);
         let slackUsername = await askSlackUsername(config['slackUsername']);
         let publishPorts = await askPublishPorts(config['publishPorts']);
-        
+        //todo add comments in config
+        //todo stop on reset
         writeFile('/etc/docker-hive/hive.conf', `
 apiKey=${apiKey}
 apiSecret=${apiSecret}

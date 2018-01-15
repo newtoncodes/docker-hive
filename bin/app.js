@@ -100,7 +100,7 @@ const checkRoot = () => {
 
 const commands = {
     nodeAdd: {
-        command: 'node add [ip]',
+        command: 'node-add [ip]',
         description: 'Allow node to connect.',
         
         builder: (yargs) => yargs
@@ -109,7 +109,7 @@ const commands = {
         handler: (argv) => resolve(() => (new Hive()).addNode(argv.ip))
     },
     nodeRm: {
-        command: 'node rm [ip]',
+        command: 'node-rm [ip]',
         description: 'Remove node from the allowed list.',
         
         builder: (yargs) => yargs
@@ -118,7 +118,7 @@ const commands = {
         handler: (argv) => resolve(() => (new Hive()).rmNode(argv.ip))
     },
     nodeList: {
-        command: 'node ls',
+        command: 'nodes',
         description: 'List the allowed nodes.',
         
         builder: (yargs) => yargs,
