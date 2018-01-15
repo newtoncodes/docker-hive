@@ -72,22 +72,27 @@ class Installer {
         let slackChannel = await askSlackChannel(config['slackChannel']);
         let slackUsername = await askSlackUsername(config['slackUsername']);
         let publishPorts = await askPublishPorts(config['publishPorts']);
-        //todo add comments in config
-        //todo stop on reset
-        writeFile('/etc/docker-hive/hive.conf', `
+
+        writeFile('/etc/docker-hive/hive.conf', `# Hive API key and secret
 apiKey=${apiKey}
 apiSecret=${apiSecret}
 
+# Grafana/portainer root user and password
 adminUsername=${adminUsername}
 adminPassword=${adminPassword}
 
+# Prometheus notifications
 slackKey=${slackKey}
 slackChannel=${slackChannel}
 slackUsername=${slackUsername}
 
+# Publish portainer, grafana and prometheus ports
 publishPorts=${publishPorts === 'yes' ? '1' : '0'}
 
+# Advertise network interface
 iface=${iface}
+
+# Callback command to execute when iptables rules get updated
 iptablesCallback="${iptablesCallback}"
 `);
         chmod('/etc/docker-hive/hive.conf', 0o600);
@@ -149,11 +154,14 @@ gateway=${gateway}
         let apiKey = await askApiKey(config['apiKey']);
         let apiSecret = await askApiSecret(config['apiSecret']);
     
-        writeFile('/etc/docker-hive/hive.conf', `
+        writeFile('/etc/docker-hive/hive.conf', `# Hive API key and secret
 apiKey=${apiKey}
 apiSecret=${apiSecret}
 
+# Advertise network interface
 iface=${iface}
+
+# Callback command to execute when iptables rules get updated
 iptablesCallback="${iptablesCallback}"
 `);
         chmod('/etc/docker-hive/hive.conf', 0o600);
