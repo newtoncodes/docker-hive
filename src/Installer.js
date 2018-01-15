@@ -168,16 +168,20 @@ iptablesCallback="${iptablesCallback}"
         
         let token = null;
         try {
-            await Utils.post(host, 4876, '/token-' + type, apiKey);
+            token = await Utils.post(host, 4876, '/token-' + type, apiKey);
         } catch (e) {
-            throw new Error('Cannot get token. Check your host address.');
+            token = null;
         }
+        
+        if (!token) throw new Error('Cannot get token. Check your host address.');
         
         try {
             token = Utils.decrypt(token, apiSecret);
         } catch (e) {
-            throw new Error('Cannot decrypt token. Check your credentials.');
+            token = null;
         }
+    
+        if (!token) throw new Error('Cannot decrypt token. Check your credentials.');
     
         try {exec('docker swarm leave --force', {stdio: [null, null, 'ignore']});} catch (e) {}
         exec('docker swarm join --token "' + token + '" "' + host + ':2377"');
