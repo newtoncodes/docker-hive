@@ -314,11 +314,10 @@ const askIface = async (iface) => {
     
     if (!iface && interfaces.length === 1) iface = interfaces[0];
     
-    return await Utils.ask('Please enter the public interface to advertise.\nOptions: ' + interfaces.join(', ') + ':\n', n => {
+    return await Utils.ask(`Please enter the public interface to advertise${iface ? ` (${iface})` : ''}: `, n => {
         return (n && interfaces.includes(n));
     }, null, iface);
 };
-
 
 let getGateway = async () => {
     let hostIp = null;
