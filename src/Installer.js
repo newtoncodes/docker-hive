@@ -133,6 +133,9 @@ gateway=${gateway}
         console.log('Swarm created.');
     
         exec('bash ' + __dirname + '/../bin/install.sh', {stdio: 'inherit'});
+        if (exists('/etc/init.d/docker-hive')) try {
+            exec('/etc/init.d/docker-hive start', {stdio: 'inherit'});
+        } catch(e) {}
     }
     
     async join (type, host, iface) {
@@ -203,11 +206,16 @@ gateway=${gateway}
         console.log('Joined to swarm successfully.');
     
         exec('bash ' + __dirname + '/../bin/install.sh', {stdio: 'inherit'});
+        if (exists('/etc/init.d/docker-hive')) try {
+            exec('/etc/init.d/docker-hive start', {stdio: 'inherit'});
+        } catch(e) {}
     }
     
     async leave() {
         if (!exists('/etc/docker-hive/env.conf')) throw new Error('This node is not connected to a swarm.');
-        if (exists('/etc/init.d/docker-hive')) exec('/etc/init.d/docker-hive stop', {stdio: 'inherit'});
+        if (exists('/etc/init.d/docker-hive')) try {
+            exec('/etc/init.d/docker-hive stop', {stdio: 'inherit'});
+        } catch(e) {}
         
         if (this._type === 'master') {
             rmVolume('hive_portainer');

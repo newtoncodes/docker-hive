@@ -153,7 +153,7 @@ const commands = {
         builder: (yargs) => yargs,
         
         handler: () => resolve(async () => {
-            try {await (new Hive()).stop();} catch (e) {}
+            await (new Hive()).stop();
             await (new Installer()).leave();
         })
     },
@@ -164,7 +164,7 @@ const commands = {
         builder: (yargs) => yargs,
         
         handler: () => resolve(async () => {
-            try {await (new Hive()).stop();} catch (e) {}
+            await (new Hive()).stop();
             await (new Installer()).reset();
         })
     },
