@@ -3,6 +3,7 @@
 'use strict';
 
 const exec = require('child_process').execSync;
+const exists = require('fs').existsSync;
 const yargs = require('yargs');
 
 const isWritable = require('../src/Utils').isWritable;
@@ -201,6 +202,11 @@ const commands = {
         builder: (yargs) => yargs,
     
         handler: () => {
+            if (!exists('/etc/docker-hive') || !exists('/etc/docker-hive/hive.conf') || !exists('/etc/docker-hive/env.conf')) {
+                console.error('Hive is not installed. Please run hive install first.');
+                process.exit(1);
+            }
+            
             exec('nano /etc/docker-hive/hive.conf', {stdio: 'inherit'});
             process.exit(0);
         }
