@@ -1,43 +1,43 @@
 version: "3.3"
 
 volumes:
-    swarm-portainer:
+    hive_portainer:
         external: true
-    swarm-prometheus-alertmanager:
+    hive_alertmanager:
         external: true
-    swarm-prometheus:
+    hive_prometheus:
         external: true
-    swarm-grafana:
+    hive_grafana:
         external: true
-    swarm-grafana-log:
+    hive_grafana_log:
         external: true
-    swarm-grafana-etc:
+    hive_grafana_etc:
         external: true
 
 networks:
-    swarm:
+    hive:
         external: true
 
 services:
     portainer:
-        image: newtoncodes/swarm-portainer:1.15.5
+        image: newtoncodes/hive-portainer:{{VERSION}}
         networks:
-            - swarm
+            - hive
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
-            - swarm-portainer:/data
+            - hive_portainer:/data
         environment:
-            - ADMIN_USERNAME=${SWARM_ADMIN_USERNAME:-admin}
-            - ADMIN_PASSWORD=${SWARM_ADMIN_PASSWORD:-admin}
+            - ADMIN_USERNAME={{ADMIN_USERNAME}}
+            - ADMIN_PASSWORD={{ADMIN_PASSWORD}}
         deploy:
             placement:
                 constraints:
                     - node.role == manager
 
     export-cadvisor:
-        image: newtoncodes/swarm-prometheus-export-cadvisor:0.28.3
+        image: newtoncodes/hive-prometheus-export-cadvisor:{{VERSION}}
         networks:
-            - swarm
+            - hive
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock:ro
             - /:/rootfs:ro
@@ -53,11 +53,11 @@ services:
                     memory: 64M
 
     export-dockerd:
-        image: newtoncodes/swarm-prometheus-export-dockerd:1.0.0
+        image: newtoncodes/hive-prometheus-export-dockerd:{{VERSION}}
         networks:
-            - swarm
+            - hive
         environment:
-            - HOST_IP=${SWARM_HOST_IP:-172.18.0.1}
+            - HOST_IP={{GATEWAY}}
         deploy:
             mode: global
             resources:
@@ -67,9 +67,9 @@ services:
                     memory: 64M
 
     export-node:
-        image: newtoncodes/swarm-prometheus-export-node:0.15.2
+        image: newtoncodes/hive-prometheus-export-node:{{VERSION}}
         networks:
-            - swarm
+            - hive
         volumes:
             - /proc:/host/proc:ro
             - /sys:/host/sys:ro
@@ -86,15 +86,15 @@ services:
                     memory: 64M
 
     alertmanager:
-        image: newtoncodes/swarm-prometheus-alertmanager:0.12.0
+        image: newtoncodes/hive-prometheus-alertmanager:{{VERSION}}
         networks:
-            - swarm
+            - hive
         volumes:
-            - swarm-prometheus-alertmanager:/alertmanager
+            - hive_alertmanager:/alertmanager
         environment:
-            - SLACK_KEY=${SWARM_SLACK_KEY:-undefined}
-            - SLACK_CHANNEL=${SWARM_SLACK_CHANNEL:-undefined}
-            - SLACK_USERNAME=${SWARM_SLACK_USERNAME:-undefined}
+            - SLACK_KEY={{SLACK_KEY}}
+            - SLACK_CHANNEL={{SLACK_CHANNEL}}
+            - SLACK_USERNAME={{SLACK_USERNAME}}
         deploy:
             mode: replicated
             replicas: 1
@@ -108,11 +108,11 @@ services:
                     memory: 64M
 
     prometheus:
-        image: newtoncodes/swarm-prometheus:2.0.0
+        image: newtoncodes/hive-prometheus:{{VERSION}}
         networks:
-            - swarm
+            - hive
         volumes:
-            - swarm-prometheus:/prometheus
+            - hive_prometheus:/prometheus
         deploy:
             mode: replicated
             replicas: 1
@@ -126,16 +126,16 @@ services:
                     memory: 1024M
 
     grafana:
-        image: newtoncodes/swarm-grafana:4.6.3
+        image: newtoncodes/hive-grafana:{{VERSION}}
         networks:
-            - swarm
+            - hive
         volumes:
-            - swarm-grafana:/var/lib/grafana
-            - swarm-grafana-log:/var/log/grafana
-            - swarm-grafana-etc:/etc/grafana
+            - hive_grafana:/var/lib/grafana
+            - hive_grafana_log:/var/log/grafana
+            - hive_grafana_etc:/etc/grafana
         environment:
-            - ADMIN_USERNAME=${SWARM_ADMIN_USERNAME:-admin}
-            - ADMIN_PASSWORD=${SWARM_ADMIN_PASSWORD:-admin}
+            - ADMIN_USERNAME={{ADMIN_USERNAME}}
+            - ADMIN_PASSWORD={{ADMIN_PASSWORD}}
         deploy:
             mode: replicated
             replicas: 1
@@ -149,9 +149,9 @@ services:
                     memory: 64M
 
     unsee:
-        image: newtoncodes/swarm-unsee:0.8.0
+        image: newtoncodes/hive-unsee:{{VERSION}}
         networks:
-            - swarm
+            - hive
         deploy:
             mode: replicated
             replicas: 1
