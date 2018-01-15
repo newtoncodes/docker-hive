@@ -54,6 +54,8 @@ class Installer {
             if (!host) host = await Utils.get('api.ipify.org', '/');
         } catch (e) {}
         
+        console.log('host', host);
+        
         host = await askHost(host);
         iface = await askIface(iface);
     
