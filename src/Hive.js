@@ -118,6 +118,8 @@ class Hive {
         writeFile('/etc/docker-hive/stack.yml', yml);
     
         exec('docker stack deploy --compose-file /etc/docker-hive/stack.yml --with-registry-auth hive', {stdio: 'inherit'});
+        
+        rmContainer('hive_snet');
         exec('docker run --name hive_snet --detach --hostname snet --restart always --cap-add=NET_ADMIN --device=/dev/net/tun --network=hive -v /etc/docker-hive/vpn:/etc/snet' + ports + ' newtoncodes/hive-snet:' + version, {stdio: 'inherit'});
     
         console.log('Hive started.');
