@@ -1,12 +1,12 @@
 #!/bin/bash
 ### BEGIN INIT INFO
-# Provides:          iptables-manager
+# Provides:          docker-hive
 # Required-Start:    $local_fs $network
 # Required-Stop:     $local_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: iptables-manager
-# Description:       iptables-manager
+# Short-Description: docker-hive
+# Description:       docker-hive
 ### END INIT INFO
 
 ENV_PATH=/etc/docker-hive/env.conf
