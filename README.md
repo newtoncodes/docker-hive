@@ -6,13 +6,13 @@ Once installed, it will expose all services required for the swarm management li
 
 The nodejs based cli app is just to make our life easier, installing the full pack and updating it.
 
-**This is not a fun project, it's heavily used in my production setups.**
+**This is not a fun project, it's meant for production use.**
 
 ### Features
 
 - Full monitoring stack.
 - Expose all hive management ports only on over a VPN.
-- Sync iptables rules over the whole swarm without logging in on all nodes.
+- Sync iptables rules over the whole swarm without logging in on all nodes (encrypted).
 - **Not having to remember lots of commands and settings**, everything comes out of the box.
 
 ### Swarm management and monitoring
@@ -50,7 +50,7 @@ This can be connected with an iptables callback that updates your iptables rules
 2. Then after init/join, add the config to /etc/docker-hive/vpn and run `hive restart`.
 3. Repeat the steps if you have more than one vpn to expose the ports to.
 
-* If you dont' have a VPN, you can publish the ports with the config or during init. **This is NOT secure**, so you should manually add iptables rules to allow those ports only for administrators.
+* If you don't have a VPN, you can publish the ports with the config or during init. **This is NOT secure**, so you should manually add iptables rules to allow those ports only for administrators.
 
 **It's preferred if you don't publish the ports, but only publish them to the internal network with VPN.** No matter if they are published, or not, you can assess the services on these ports:
 * http://SERVER_PUBLIC_OR_VPN_ADDRESS:**3000** => Portainer 
