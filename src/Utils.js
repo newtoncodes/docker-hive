@@ -48,7 +48,6 @@ const lib = {
                 res.on('data', chunk => {
                     if (responded) return;
                     result += chunk;
-                    console.log(chunk);
                 });
                 res.on('end', () => {
                     if (responded) return;
@@ -85,7 +84,6 @@ const lib = {
                 res.on('data', chunk => {
                     if (responded) return;
                     result += chunk;
-                    console.log(chunk);
                 });
                 res.on('end', () => {
                     if (responded) return;
