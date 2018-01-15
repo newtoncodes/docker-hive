@@ -106,13 +106,12 @@ const lib = {
         try {
             let iv = crypto.randomBytes(12);
             let salt = crypto.randomBytes(64);
-            let key = crypto.pbkdf2Sync(password, salt, 2145, 128, 'sha512');
+            let key = crypto.pbkdf2Sync(password, salt, 2145, 32, 'sha512');
             let cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
             let encrypted = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
             let tag = cipher.getAuthTag();
             
             return Buffer.concat([salt, iv, tag, encrypted]).toString('base64');
-            
         } catch(e) {}
         
         return null;
@@ -127,13 +126,12 @@ const lib = {
             let tag = bData.slice(76, 92);
             let text = bData.slice(92);
             
-            let key = crypto.pbkdf2Sync(password, salt , 2145, 128, 'sha512');
+            let key = crypto.pbkdf2Sync(password, salt , 2145, 32, 'sha512');
             
             let decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
             decipher.setAuthTag(tag);
             
             return decipher.update(text, 'binary', 'utf8') + decipher.final('utf8');
-            
         } catch(e) {}
         
         return null;
