@@ -28,11 +28,11 @@ exec('cd ' + __dirname + '/../../docker/prometheus-export-dockerd && docker buil
 exec('cd ' + __dirname + '/../../docker/prometheus-export-node && docker build -t newtoncodes/hive-prometheus-export-node .');
 exec('cd ' + __dirname + '/../../docker/prometheus-export-node && docker build -t newtoncodes/hive-prometheus-export-node:' + version + ' .');
 
-exec('cd ' + __dirname + '/../../docker/hive-snet && docker build -t newtoncodes/hive-snet .');
-exec('cd ' + __dirname + '/../../docker/hive-snet && docker build -t newtoncodes/hive-snet:' + version + ' .');
+exec('cd ' + __dirname + '/../../docker/snet && docker build -t newtoncodes/hive-snet .');
+exec('cd ' + __dirname + '/../../docker/snet && docker build -t newtoncodes/hive-snet:' + version + ' .');
 
-exec('cd ' + __dirname + '/../../docker/hive-unsee && docker build -t newtoncodes/hive-unsee .');
-exec('cd ' + __dirname + '/../../docker/hive-unsee && docker build -t newtoncodes/hive-unsee:' + version + ' .');
+exec('cd ' + __dirname + '/../../docker/unsee && docker build -t newtoncodes/hive-unsee .');
+exec('cd ' + __dirname + '/../../docker/unsee && docker build -t newtoncodes/hive-unsee:' + version + ' .');
 
 console.log('Done.');
 process.exit(0);
