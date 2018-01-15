@@ -207,6 +207,7 @@ gateway=${gateway}
     
     async leave() {
         if (!exists('/etc/docker-hive/env.conf')) throw new Error('This node is not connected to a swarm.');
+        if (exists('/etc/init.d/docker-hive')) exec('/etc/init.d/docker-hive stop', {stdio: 'inherit'});
         
         if (this._type === 'master') {
             rmVolume('hive_portainer');
@@ -222,8 +223,6 @@ gateway=${gateway}
         if (exists('/etc/docker-hive/env.conf')) unlink('/etc/docker-hive/env.conf');
         if (exists('/etc/docker-hive/nodes')) unlink('/etc/docker-hive/nodes');
         exec('docker swarm leave --force');
-    
-        exec('/etc/init.d/docker-hive stop', {stdio: 'inherit'});
         
         console.log('Left the swarm successfully.');
     }
