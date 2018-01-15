@@ -138,14 +138,16 @@ class Hive {
         this._checkMaster();
     
         console.log('Stopping hive...');
+    
+        console.log('Stopping hive_snet');
+        rmContainer('hive_snet');
         
         let ls = (exec('docker stack ls') || '')['toString']('utf8').trim();
         
         if (ls.match(/(^|\n|\s)hive(\s|\n)/m)) {
-            exec('docker stack rm hive');
+            exec('docker stack rm hive', {stdio: 'inherit'});
         }
     
-        rmContainer('hive_snet');
         rmContainer('hive_portainer');
         rmContainer('hive_prometheus');
         rmContainer('hive_alertmanager');
