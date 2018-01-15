@@ -205,9 +205,6 @@ class Hive {
         this._checkManagerWorker();
         
         let sync = async () => {
-            console.log('syncing');
-            console.log(this._config.iptablesCallback);
-            
             let rule = this.getIptables();
             let nodes = null;
             
@@ -217,7 +214,10 @@ class Hive {
                 nodes = null;
             }
             
-            if (!nodes) console.error('Sync error: Cannot connect to server.');
+            if (!nodes) {
+                setTimeout(() => sync().then(() => {}).catch(() => {}), 5000);
+                return console.error('Sync error: Cannot connect to server.');
+            }
     
             try {
                 nodes = Utils.decrypt(nodes, this._config.apiSecret);
@@ -226,11 +226,15 @@ class Hive {
                 nodes = null;
             }
     
-            if (!nodes) return console.error('Sync error: Cannot parse server message.');
+            if (!nodes) {
+                setTimeout(() => sync().then(() => {}).catch(() => {}), 5000);
+                return console.error('Sync error: Cannot parse server message.');
+            }
     
             try {
                 saveNodes(nodes);
             } catch (e) {
+                setTimeout(() => sync().then(() => {}).catch(() => {}), 5000);
                 return console.error('Sync error: Cannot save nodes.');
             }
             
@@ -240,6 +244,7 @@ class Hive {
                 try {
                     exec(this._config.iptablesCallback);
                 } catch (e) {
+                    setTimeout(() => sync().then(() => {}).catch(() => {}), 5000);
                     return console.error('Error executing iptables callback: ' + this._config.iptablesCallback);
                 }
             }
