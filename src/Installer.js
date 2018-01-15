@@ -244,7 +244,7 @@ const askType = async (initial) => {
 };
 
 const askHost = async (initial) => {
-    return await Utils.ask('Public interface to advertise: ', n => {
+    return await Utils.ask(`Public interface to advertise${initial ? ` (${initial})` : ''}: `, n => {
         return (n && !!n.match(/^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/));
     }, undefined, initial);
 };
