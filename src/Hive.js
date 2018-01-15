@@ -375,7 +375,13 @@ let stopContainer = (name) => {
     try {
         res = exec(`docker stop $(docker ps -aq --filter="name=${name}")`);
     } catch (e) {
-        throw new Error('Could not remove container: ' + name);
+        console.log(e.stderr, e.stdout);
+        if (e.stderr.indexOf('requires at least 1 argument.') > 0) {
+            console.info('FOUND NOW');
+            return;
+        }
+        
+        throw new Error('Could not stop container: ' + name);
     }
     
     if (res.indexOf('"docker stop" requires') !== -1) {
@@ -391,6 +397,12 @@ let rmContainer = (name) => {
     try {
         res = exec(`docker rm -v $(docker ps -aq --filter="name=${name}")`);
     } catch (e) {
+        console.log(e.stderr, e.stdout);
+        if (e.stderr.indexOf('requires at least 1 argument.') > 0) {
+            console.info('FOUND NOW');
+            return;
+        }
+        
         throw new Error('Could not remove container: ' + name);
     }
     
