@@ -358,7 +358,7 @@ const saveNodes = (nodes) => {
 };
 
 const getToken = (type) => {
-    let o = (exec('docker swarm join-token ' + type) || '', {stdio: [null, null, null])['toString']('utf8');
+    let o = (exec('docker swarm join-token ' + type) || '', {stdio: [null, null, null]})['toString']('utf8');
     let oo = o.match(/docker swarm join --token ([^\s]+) ([^:]+):(\d+)/);
     if (!oo) throw new Error('Could not get the token.');
     
