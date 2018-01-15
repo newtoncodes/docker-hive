@@ -60,8 +60,14 @@ class Installer {
         iface = await askIface(iface);
     
         let iptablesCallback = await askIptablesCallback(config['iptablesCallback']);
-        let apiKey = await askApiKey(config['apiKey']);
-        let apiSecret = await askApiSecret(config['apiSecret']);
+    
+        let apiKey = config['apiKey'];
+        let apiSecret = config['apiSecret'];
+        if (!apiKey || apiKey.length !== 128 || !apiSecret || apiSecret.length !== 128 || 'yes' === await askRegenerateApi()) {
+            apiKey = await generateToken(128);
+            apiSecret = await generateToken(128);
+        }
+        
         let adminUsername = await askAdminUsername(config['adminUsername']);
         let adminPassword = await askAdminPassword(config['adminPassword']);
         let slackKey = await askSlackKey(config['slackKey']);
@@ -255,14 +261,22 @@ const askIptablesCallback = async (initial) => {
     return await Utils.ask('Bash command to run on iptables rules change: ', () => true, undefined, initial);
 };
 
+const askRegenerateApi = async () => {
+    let a = await Utils.ask(`Hive key and secret already found. Do you want to generate new ones - yes or no? (no): `, n => {
+        return n.toLowerCase() === 'yes' || n.toLowerCase() === 'no';
+    }, undefined, 'no');
+    
+    return a.toLowerCase();
+};
+
 const askApiKey = async (initial) => {
-    return await Utils.ask(`Api key${initial ? ` (use previous)` : ''}: `, n => {
+    return await Utils.ask(`Hive key${initial ? ` (use previous)` : ''}: `, n => {
         return n && n.length === 128;
     }, undefined, initial);
 };
 
 const askApiSecret = async (initial) => {
-    return await Utils.ask(`Api secret${initial ? ` (use previous)` : ''}: `, n => {
+    return await Utils.ask(`Hive secret${initial ? ` (use previous)` : ''}: `, n => {
         return n && n.length === 128;
     }, undefined, initial);
 };
@@ -292,7 +306,7 @@ const askSlackUsername = async (initial) => {
 const askPublishPorts = async (initial) => {
     let a = await Utils.ask(`Publish ports - yes or no${initial ? ` (${initial === '1' || initial === 'y' || initial === 'yes' ? 'yes' : 'no'})` : ' (no)'}: `, n => {
         return n.toLowerCase() === 'yes' || n.toLowerCase() === 'no';
-    }, undefined, initial);
+    }, undefined, initial === '1' || initial === 'y' || initial === 'yes' ? 'yes' : 'no');
     
     return a.toLowerCase();
 };
@@ -338,6 +352,14 @@ let getGateway = async () => {
     
     return hostIp;
 };
+
+const generateToken = async (length) => {
+    return await new Promise(resolve => {
+        require('crypto').randomBytes(length * 3, function(err, buffer) {
+            resolve(buffer['toString']('base64').replace(/\W/g, '').replace(/[^a-zA-Z0-9]/g, '').substr(0, length));
+        });
+    });
+}
 
 
 const existsVolume = (name) => {
