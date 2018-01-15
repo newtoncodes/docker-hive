@@ -3,7 +3,6 @@
 'use strict';
 
 const exec = require('child_process').execSync;
-const exists = require('fs').existsSync;
 const yargs = require('yargs');
 
 const isWritable = require('../src/Utils').isWritable;
@@ -72,9 +71,17 @@ const options = {
     },
 };
 
-const resolve = (promise, cb = () => process.exit(0), cmd) => {
+const resolve = (fn, cb = () => process.exit(0)) => {
     checkRoot();
-    if (cmd !== 'install' && cmd !== 'install-dependencies') checkInstall();
+    
+    let promise = null;
+    
+    try {
+        promise = fn();
+    } catch (e) {
+        e.message && console.error('Error: ' + e.message);
+        process.exit(1);
+    }
     
     return promise.then(cb).catch(e => {
         e.message && console.error('Error: ' + e.message);
@@ -89,14 +96,6 @@ const checkRoot = () => {
     }
 };
 
-const checkInstall = () => {
-    if (!exists('/etc/docker-hive/hive.conf')) {
-        console.error(`Please run hive install.`);
-        process.exit(1);
-    }
-};
-
-
 
 const commands = {
     nodeAdd: {
@@ -106,7 +105,7 @@ const commands = {
         builder: (yargs) => yargs
             .positional('ip', options.ip),
         
-        handler: (argv) => resolve((new Hive()).addNode(argv.ip))
+        handler: (argv) => resolve(() => (new Hive()).addNode(argv.ip))
     },
     nodeRm: {
         command: 'node rm [ip]',
@@ -115,7 +114,7 @@ const commands = {
         builder: (yargs) => yargs
             .positional('ip', options.ip),
     
-        handler: (argv) => resolve((new Hive()).rmNode(argv.ip))
+        handler: (argv) => resolve(() => (new Hive()).rmNode(argv.ip))
     },
     nodeList: {
         command: 'node ls',
@@ -123,7 +122,7 @@ const commands = {
         
         builder: (yargs) => yargs,
     
-        handler: () => resolve((new Hive()).lsNodes())
+        handler: () => resolve(() => (new Hive()).lsNodes())
     },
     init: {
         command: 'init',
@@ -133,7 +132,7 @@ const commands = {
             .positional('host', options.host)
             .positional('iface', options.iface),
     
-        handler: (argv) => resolve((new Installer()).init(argv.host, argv.iface))
+        handler: (argv) => resolve(() => (new Installer()).init(argv.host, argv.iface))
     },
     join: {
         command: 'join [-t <type>] [-h <host>] [-i <interface>]',
@@ -144,7 +143,7 @@ const commands = {
             .positional('host', options.host)
             .positional('iface', options.iface),
         
-        handler: (argv) => resolve((new Installer()).join(argv.type, argv.host, argv.iface))
+        handler: (argv) => resolve(() => (new Installer()).join(argv.type, argv.host, argv.iface))
     },
     leave: {
         command: 'leave [-h <host>] [-i <interface>]',
@@ -152,7 +151,7 @@ const commands = {
         
         builder: (yargs) => yargs,
         
-        handler: () => resolve((new Installer()).leave())
+        handler: () => resolve(() => (new Installer()).leave())
     },
     reset: {
         command: 'reset',
@@ -160,7 +159,7 @@ const commands = {
         
         builder: (yargs) => yargs,
         
-        handler: () => resolve((new Installer()).reset())
+        handler: () => resolve(() => (new Installer()).reset())
     },
     start: {
         command: 'start',
@@ -168,7 +167,7 @@ const commands = {
     
         builder: (yargs) => yargs,
     
-        handler: () => resolve((new Hive()).start())
+        handler: () => resolve(() => (new Hive()).start())
     },
     stop: {
         command: 'stop',
@@ -176,7 +175,7 @@ const commands = {
     
         builder: (yargs) => yargs,
     
-        handler: () => resolve((new Hive()).stop())
+        handler: () => resolve(() => (new Hive()).stop())
     },
     restart: {
         command: 'restart',
@@ -184,7 +183,7 @@ const commands = {
     
         builder: (yargs) => yargs,
     
-        handler: () => resolve((new Hive()).restart())
+        handler: () => resolve(() => (new Hive()).restart())
     },
     iptables: {
         command: 'iptables [-s <file>]',
@@ -193,7 +192,7 @@ const commands = {
         builder: (yargs) => yargs
             .positional('save', options.save),
     
-        handler: (argv) => resolve((new Hive()).showIptables(argv.save))
+        handler: (argv) => resolve(() => (new Hive()).showIptables(argv.save))
     },
     config: {
         command: 'config',
@@ -212,7 +211,7 @@ const commands = {
         
         builder: (yargs) => yargs,
     
-        handler: () => resolve((new Hive()).sync())
+        handler: () => resolve(() => (new Hive()).sync())
     },
     serve: {
         command: 'serve',
@@ -220,7 +219,7 @@ const commands = {
         
         builder: (yargs) => yargs,
     
-        handler: () => resolve((new Hive()).serve())
+        handler: () => resolve(() => (new Hive()).serve())
     },
     dependencies: {
         command: 'dependencies',
