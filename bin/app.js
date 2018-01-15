@@ -3,16 +3,12 @@
 'use strict';
 
 const exec = require('child_process').execSync;
+const exists = require('fs').existsSync;
 const yargs = require('yargs');
 
-const {isWritable, exists} = require('../src/lib');
-const sync = require('../src/commands/sync').sync;
-const nodeAdd = require('../src/commands/nodes').add;
-const nodeRm = require('../src/commands/nodes').rm;
-const nodeList = require('../src/commands/nodes').list;
-const start = require('../src/commands/start').start;
-const stop = require('../src/commands/stop').stop;
-const iptables = require('../src/commands/iptables').iptables;
+const isWritable = require('../src/Utils').isWritable;
+const Installer = require('../src/Installer');
+const Hive = require('../src/Hive');
 
 
 const options = {
@@ -46,11 +42,34 @@ const options = {
         type: 'string'
     },
     
-    interface: {
-        alias: 'i',
-        description: 'Public network interface to allow.',
+    type: {
+        alias: 't',
+        description: 'Node type',
+        choices: ['manager', 'worker'],
         type: 'string'
-    }
+    },
+    
+    host: {
+        alias: 'h',
+        description: 'Host ip address to advertise.',
+        type: 'string',
+    
+        coerce: (ip) => {
+            ip = ip.trim().toLowerCase();
+        
+            if (ip && !ip.match(/^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/)) {
+                throw new Error('Invalid client ip.');
+            }
+        
+            return ip;
+        }
+    },
+    
+    iface: {
+        alias: 'i',
+        description: 'Host interface to advertise.',
+        type: 'string'
+    },
 };
 
 const resolve = (promise, cb = () => process.exit(0), cmd) => {
@@ -71,7 +90,7 @@ const checkRoot = () => {
 };
 
 const checkInstall = () => {
-    if (!exists('/etc/docker-hive/vars.env')) {
+    if (!exists('/etc/docker-hive/hive.conf')) {
         console.error(`Please run hive install.`);
         process.exit(1);
     }
@@ -85,30 +104,63 @@ const commands = {
         description: 'Allow node to connect.',
         
         builder: (yargs) => yargs
-            .positional('cmd', options.cmd)
             .positional('ip', options.ip),
         
-        handler: (argv) => resolve(nodeAdd(argv.cmd, argv.ip))
+        handler: (argv) => resolve((new Hive()).addNode(argv.ip))
     },
     nodeRm: {
         command: 'node rm [ip]',
         description: 'Remove node from the allowed list.',
         
         builder: (yargs) => yargs
-            .positional('cmd', options.cmd)
             .positional('ip', options.ip),
-        
-        handler: (argv) => resolve(nodeRm(argv.cmd, argv.ip))
+    
+        handler: (argv) => resolve((new Hive()).rmNode(argv.ip))
     },
     nodeList: {
-        command: 'node ls [ip]',
+        command: 'node ls',
         description: 'List the allowed nodes.',
         
-        builder: (yargs) => yargs
-            .positional('cmd', options.cmd)
-            .positional('ip', options.ip),
+        builder: (yargs) => yargs,
+    
+        handler: () => resolve((new Hive()).lsNodes())
+    },
+    init: {
+        command: 'init',
+        description: 'Create a new docker swarm.',
         
-        handler: (argv) => resolve(nodeList(argv.cmd, argv.ip))
+        builder: (yargs) => yargs
+            .positional('host', options.host)
+            .positional('iface', options.iface),
+    
+        handler: (argv) => resolve((new Installer()).init(argv.host, argv.iface))
+    },
+    join: {
+        command: 'join [-t <type>] [-h <host>] [-i <interface>]',
+        description: 'Join a docker swarm (manager by hive).',
+        
+        builder: (yargs) => yargs
+            .positional('type', options.type)
+            .positional('host', options.host)
+            .positional('iface', options.iface),
+        
+        handler: (argv) => resolve((new Installer()).join(argv.type, argv.host, argv.iface))
+    },
+    leave: {
+        command: 'leave [-h <host>] [-i <interface>]',
+        description: 'Leave the current swarm.',
+        
+        builder: (yargs) => yargs,
+        
+        handler: () => resolve((new Installer()).leave())
+    },
+    reset: {
+        command: 'reset',
+        description: 'Join to a docker swarm (manager by hive).',
+        
+        builder: (yargs) => yargs,
+        
+        handler: () => resolve((new Installer()).reset())
     },
     start: {
         command: 'start',
@@ -116,7 +168,7 @@ const commands = {
     
         builder: (yargs) => yargs,
     
-        handler: () => resolve(start())
+        handler: () => resolve((new Hive()).start())
     },
     stop: {
         command: 'stop',
@@ -124,7 +176,7 @@ const commands = {
     
         builder: (yargs) => yargs,
     
-        handler: () => resolve(stop())
+        handler: () => resolve((new Hive()).stop())
     },
     restart: {
         command: 'restart',
@@ -132,20 +184,46 @@ const commands = {
     
         builder: (yargs) => yargs,
     
-        handler: () => resolve(stop(), () => resolve(start()))
+        handler: () => resolve((new Hive()).restart())
     },
     iptables: {
-        command: 'iptables [-i <interface>] [-s <file>]',
+        command: 'iptables [-s <file>]',
         description: 'Print all iptables accept rules.',
         
         builder: (yargs) => yargs
-            .positional('interface', options.interface)
             .positional('save', options.save),
-        
-        handler: (argv) => resolve(iptables(argv.interface, argv.save))
+    
+        handler: (argv) => resolve((new Hive()).showIptables(argv.save))
     },
-    install: {
-        command: 'install',
+    config: {
+        command: 'config',
+        description: 'Edit the config with nano.',
+        
+        builder: (yargs) => yargs,
+    
+        handler: () => {
+            exec('nano /etc/docker-hive/hive.conf', {stdio: 'inherit'});
+            process.exit(0);
+        }
+    },
+    sync: {
+        command: 'sync',
+        description: 'Sync config with the master node.',
+        
+        builder: (yargs) => yargs,
+    
+        handler: () => resolve((new Hive()).sync())
+    },
+    serve: {
+        command: 'serve',
+        description: 'Serve config to the worker/manager nodes.',
+        
+        builder: (yargs) => yargs,
+    
+        handler: () => resolve((new Hive()).serve())
+    },
+    dependencies: {
+        command: 'dependencies',
         description: 'Install dependencies (Ubuntu/Debian).',
         
         builder: (yargs) => yargs,
@@ -155,69 +233,6 @@ const commands = {
             process.exit(0);
         }
     },
-    sync: {
-        command: 'sync',
-        description: 'Sync config with the master node.',
-        
-        builder: (yargs) => yargs,
-        
-        handler: () => resolve(sync())
-    },
-    config: {
-        command: 'config',
-        description: 'Edit the config with nano.',
-        
-        builder: (yargs) => yargs,
-    
-        handler: () => {
-            exec('nano /etc/docker-hive/vars.env', {stdio: 'inherit'});
-            process.exit(0);
-        }
-    },
-    tokenWorker: {
-        command: 'token worker',
-        description: 'Get the worker join token.',
-        
-        builder: (yargs) => yargs,
-        
-        handler: () => {
-            let o = (exec('docker swarm join-token worker') || '')['toString']('utf8');
-            let oo = o.match(/docker swarm join --token ([^\s]+) ([^:]+):(\d+)/);
-            if (!oo) {
-                console.error('Could not get the token.');
-                process.exit(1);
-            }
-    
-            let token = oo[1];
-            let host = oo[2];
-            // let port = oo[3];
-    
-            console.log(`hive join ${host} ${token}`);
-            process.exit(0);
-        }
-    },
-    tokenManager: {
-        command: 'token manager',
-        description: 'Get the manager join token.',
-        
-        builder: (yargs) => yargs,
-        
-        handler: () => {
-            let o = (exec('docker swarm join-token manager') || '')['toString']('utf8');
-            let oo = o.match(/docker swarm join --token ([^\s]+) ([^:]+):(\d+)/);
-            if (!oo) {
-                console.error('Could not get the token.');
-                process.exit(1);
-            }
-            
-            let token = oo[1];
-            let host = oo[2];
-            // let port = oo[3];
-    
-            console.log(`hive join ${host} ${token}`);
-            process.exit(0);
-        }
-    }
 };
 
 
@@ -226,10 +241,11 @@ yargs
     .usage('Full-stack docker-swarm management.\n\nUsage: $0 <cmd> <args ...>')
     .demandCommand(1, 1, 'You must specify a command.', 'You must specify max one command.')
     
-    .command(commands['install'])
+    .command(commands['init'])
+    .command(commands['join'])
+    .command(commands['leave'])
+    .command(commands['reset'])
     .command(commands['config'])
-    .command(commands['tokenManager'])
-    .command(commands['tokenWorker'])
     
     .command(commands['start'])
     .command(commands['stop'])
@@ -239,10 +255,11 @@ yargs
     .command(commands['nodeRm'])
     .command(commands['nodeList'])
     
+    .command(commands['serve'])
     .command(commands['sync'])
     
     .command(commands['iptables'])
-    .command(commands['install'])
+    .command(commands['dependencies'])
     .help();
 
 if (!commands[yargs.argv['_'][0]]) {

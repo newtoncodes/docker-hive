@@ -1,17 +1,17 @@
 version: "3.3"
 
 volumes:
-    hive-portainer:
+    hive_portainer:
         external: true
-    hive-prometheus-alertmanager:
+    hive_alertmanager:
         external: true
-    hive-prometheus:
+    hive_prometheus:
         external: true
-    hive-grafana:
+    hive_grafana:
         external: true
-    hive-grafana-log:
+    hive_grafana_log:
         external: true
-    hive-grafana-etc:
+    hive_grafana_etc:
         external: true
 
 networks:
@@ -25,7 +25,7 @@ services:
             - hive
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
-            - hive-portainer:/data
+            - hive_portainer:/data
         environment:
             - ADMIN_USERNAME={{ADMIN_USERNAME}}
             - ADMIN_PASSWORD={{ADMIN_PASSWORD}}
@@ -57,7 +57,7 @@ services:
         networks:
             - hive
         environment:
-            - HOST_IP={{HOST_IP}}
+            - HOST_IP={{GATEWAY}}
         deploy:
             mode: global
             resources:
@@ -90,7 +90,7 @@ services:
         networks:
             - hive
         volumes:
-            - hive-prometheus-alertmanager:/alertmanager
+            - hive_alertmanager:/alertmanager
         environment:
             - SLACK_KEY={{SLACK_KEY}}
             - SLACK_CHANNEL={{SLACK_CHANNEL}}
@@ -112,7 +112,7 @@ services:
         networks:
             - hive
         volumes:
-            - hive-prometheus:/prometheus
+            - hive_prometheus:/prometheus
         deploy:
             mode: replicated
             replicas: 1
@@ -130,9 +130,9 @@ services:
         networks:
             - hive
         volumes:
-            - hive-grafana:/var/lib/grafana
-            - hive-grafana-log:/var/log/grafana
-            - hive-grafana-etc:/etc/grafana
+            - hive_grafana:/var/lib/grafana
+            - hive_grafana_log:/var/log/grafana
+            - hive_grafana_etc:/etc/grafana
         environment:
             - ADMIN_USERNAME={{ADMIN_USERNAME}}
             - ADMIN_PASSWORD={{ADMIN_PASSWORD}}

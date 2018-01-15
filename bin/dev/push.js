@@ -1,8 +1,9 @@
 'use strict';
 
-const {exec, version} = require('../../src/lib');
+const execSync = require('child_process').execSync;
+const exec = (cmd) => (execSync(cmd, {stdio: 'inherit'}) || '')['toString']('utf8');
+const version = require('../../package.json').version;
 
-require('./build');
 
 exec('docker push newtoncodes/hive-grafana');
 exec('docker push newtoncodes/hive-grafana:' + version);
