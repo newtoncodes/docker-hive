@@ -217,7 +217,7 @@ const commands = {
         
         builder: (yargs) => yargs,
     
-        handler: () => resolve(() => (hive = new Hive()).sync())
+        handler: () => resolve(() => (hive = new Hive()).sync(), () => {})
     },
     serve: {
         command: 'serve',
@@ -225,7 +225,7 @@ const commands = {
         
         builder: (yargs) => yargs,
     
-        handler: () => resolve(() => (hive = new Hive()).serve())
+        handler: () => resolve(() => (hive = new Hive()).serve(), () => {})
     },
     dependencies: {
         command: 'install-dependencies',
