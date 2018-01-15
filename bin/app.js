@@ -269,6 +269,7 @@ yargs
     .command(commands['dependencies'])
     .help();
 
+console.log(commands[yargs.argv['_']]);
 if (!commands[yargs.argv['_'][0]]) {
     yargs.showHelp('log');
     console.log('Please enter a command.');
