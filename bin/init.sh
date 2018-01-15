@@ -35,9 +35,9 @@ start() {
     fi
 
     if [ "$type" = "master" ]; then
-        docker-hive serve 1> /var/log/docker-hive-serve.log 2>&1 &
+        nohup docker-hive serve < /dev/null >> /var/log/docker-hive-serve.log 2>&1 &
     else
-        docker-hive sync 1> /var/log/docker-hive-sync.log 2>&1 &
+        nohup docker-hive sync < /dev/null >> /var/log/docker-hive-sync.log 2>&1 &
     fi
 
     echo "Started."
