@@ -349,7 +349,8 @@ let getGateway = async () => {
         await new Promise(resolve => setTimeout(() => resolve(), 1000));
         
         try {
-            hostIp = (exec('cut -d\'/\' -f1 <<< `ip -o addr show docker_gwbridge | awk \'{print $4}\'`') || '')['toString']('utf8').trim();
+            hostIp = (exec('ip -o addr show docker_gwbridge | awk \'{print $4}\'') || '')['toString']('utf8').trim().split(/\s+/)[0];
+            console.log('hostIp', hostIp);
         } catch (e) {
             hostIp = null;
         }
