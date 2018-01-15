@@ -14,10 +14,6 @@ const Utils = require('./Utils');
 
 class Installer {
     constructor() {
-        if (!exists('/etc/docker-hive') || !exists('/etc/docker-hive/hive.conf') || !exists('/etc/docker-hive/env.conf')) {
-            throw new Error('Hive is not installed. Please run hive install first.');
-        }
-    
         if (exists('/etc/docker-hive/hive.conf')) {
             try {
                 this._config = dotenv.parse(readFile('/etc/docker-hive/hive.conf'));

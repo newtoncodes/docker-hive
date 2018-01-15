@@ -13,7 +13,7 @@ const version = require('../package.json').version;
 class Hive {
     constructor() {
         if (!exists('/etc/docker-hive') || !exists('/etc/docker-hive/hive.conf') || !exists('/etc/docker-hive/env.conf')) {
-            throw new Error('Hive is not installed. Please run hive install first.');
+            throw new Error('Hive is not installed. Please run hive init or hive join first.');
         }
     
         let config = null;

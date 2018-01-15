@@ -126,7 +126,7 @@ const commands = {
         handler: () => resolve(() => (new Hive()).lsNodes())
     },
     init: {
-        command: 'init',
+        command: 'init [-h <host>] [-i <interface>]',
         description: 'Create a new docker swarm.',
         
         builder: (yargs) => yargs
@@ -147,7 +147,7 @@ const commands = {
         handler: (argv) => resolve(() => (new Installer()).join(argv.type, argv.host, argv.iface))
     },
     leave: {
-        command: 'leave [-h <host>] [-i <interface>]',
+        command: 'leave',
         description: 'Leave the current swarm.',
         
         builder: (yargs) => yargs,
@@ -203,7 +203,7 @@ const commands = {
     
         handler: () => {
             if (!exists('/etc/docker-hive') || !exists('/etc/docker-hive/hive.conf') || !exists('/etc/docker-hive/env.conf')) {
-                console.error('Hive is not installed. Please run hive install first.');
+                console.error('Error: Hive is not installed. Please run hive install first.');
                 process.exit(1);
             }
             
@@ -228,7 +228,7 @@ const commands = {
         handler: () => resolve(() => (new Hive()).serve())
     },
     dependencies: {
-        command: 'dependencies',
+        command: 'install-dependencies',
         description: 'Install dependencies (Ubuntu/Debian).',
         
         builder: (yargs) => yargs,
