@@ -169,6 +169,8 @@ class Hive {
     
     async addNode(ip) {
         this._checkMaster();
+    
+        ip = await askIp(ip);
         
         if (!ip.match(/^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/)) {
             throw new Error('Invalid ip address: ' + ip);
@@ -183,6 +185,8 @@ class Hive {
     
     async rmNode(ip) {
         this._checkMaster();
+    
+        ip = await askIp(ip);
         
         let nodes = getNodes();
         let i = nodes.indexOf(ip);
@@ -367,6 +371,12 @@ iptables -A INPUT  -p udp -s "${ip}" -i ${iface} --dport 4789 -j ACCEPT
         if (this._type === 'master') throw new Error('You cannot do this on the master machine.');
     }
 }
+
+const askIp = async (initial) => {
+    return await Utils.ask(`Public IPv4 address of the node: `, n => {
+        return (n && !!n.match(/^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/));
+    }, initial);
+};
 
 const getNodes = () => {
     if (!exists('/etc/docker-hive/nodes')) return [];
