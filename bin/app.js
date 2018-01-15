@@ -99,7 +99,7 @@ const checkRoot = () => {
 
 
 const commands = {
-    nodeAdd: {
+    'node-add': {
         command: 'node-add [ip]',
         description: 'Allow node to connect.',
         
@@ -108,7 +108,7 @@ const commands = {
         
         handler: (argv) => resolve(() => (new Hive()).addNode(argv.ip))
     },
-    nodeRm: {
+    'node-rm': {
         command: 'node-rm [ip]',
         description: 'Remove node from the allowed list.',
         
@@ -117,7 +117,7 @@ const commands = {
     
         handler: (argv) => resolve(() => (new Hive()).rmNode(argv.ip))
     },
-    nodeList: {
+    nodes: {
         command: 'nodes',
         description: 'List the allowed nodes.',
         
@@ -258,9 +258,9 @@ yargs
     .command(commands['stop'])
     .command(commands['restart'])
     
-    .command(commands['nodeAdd'])
-    .command(commands['nodeRm'])
-    .command(commands['nodeList'])
+    .command(commands['node-add'])
+    .command(commands['node-rm'])
+    .command(commands['nodes'])
     
     .command(commands['serve'])
     .command(commands['sync'])
@@ -269,9 +269,7 @@ yargs
     .command(commands['dependencies'])
     .help();
 
-console.log(commands[yargs.argv['_']]);
 if (!commands[yargs.argv['_'][0]]) {
     yargs.showHelp('log');
-    console.log('Please enter a command.');
     process.exit(1);
 }
