@@ -132,7 +132,7 @@ gateway=${gateway}
         
         console.log('Swarm created.');
     
-        exec('bash' + __dirname + '/../bin/install.sh', {stdio: 'inherit'});
+        exec('bash ' + __dirname + '/../bin/install.sh', {stdio: 'inherit'});
     }
     
     async join (type, host, iface) {
@@ -202,7 +202,7 @@ gateway=${gateway}
         
         console.log('Joined to swarm successfully.');
     
-        exec('bash' + __dirname + '/../bin/install.sh', {stdio: 'inherit'});
+        exec('bash ' + __dirname + '/../bin/install.sh', {stdio: 'inherit'});
     }
     
     async leave() {
