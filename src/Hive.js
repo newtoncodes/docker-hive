@@ -359,7 +359,7 @@ iptables -A INPUT  -p udp -s "${ip}" -i ${iface} --dport 4789 -j ACCEPT
 const getNodes = () => {
     if (!exists('/etc/docker-hive/nodes')) return [];
     
-    return readFile('/etc/docker-hive/nodes', 'utf8').trim().slice('\n').filter(ip => {
+    return readFile('/etc/docker-hive/nodes', 'utf8').trim().split('\n').filter(ip => {
         return !!ip.match(/^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/);
     });
 };
