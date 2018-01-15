@@ -371,7 +371,7 @@ let stopContainer = (name) => {
     let res = '';
     
     try {
-        res = exec(`docker stop -v $(docker ps -aq --filter="name=${name}")`);
+        res = exec(`docker stop $(docker ps -aq --filter="name=${name}")`);
     } catch (e) {
         throw new Error('Could not remove container: ' + name);
     }
