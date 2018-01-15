@@ -54,8 +54,6 @@ class Installer {
             if (!host) host = await Utils.get('api.ipify.org', '/');
         } catch (e) {}
         
-        console.log('host', host);
-        
         host = await askHost(host);
         iface = await askIface(iface);
     
@@ -94,7 +92,7 @@ iptablesCallback="${iptablesCallback}"
         chmod('/etc/docker-hive/hive.conf', 0o600);
     
         try {exec('docker swarm leave --force');} catch (e) {}
-        exec('docker swarm init');
+        exec('docker swarm init --advertise-addr ' + host);
     
         let gateway = await getGateway();
     
