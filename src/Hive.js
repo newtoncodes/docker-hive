@@ -358,7 +358,7 @@ const saveNodes = (nodes) => {
 };
 
 const getToken = (type) => {
-    let o = (exec('docker swarm join-token ' + type, {stdio: ['pipe', 'pipe', 'pipe']}) || '')['toString']('utf8');
+    let o = (exec('docker swarm join-token ' + type) || '')['toString']('utf8');
     let oo = o.match(/docker swarm join --token ([^\s]+) ([^:]+):(\d+)/);
     if (!oo) throw new Error('Could not get the token.');
     
@@ -373,19 +373,13 @@ let stopContainer = (name) => {
     let res = '';
     
     try {
-        res = exec(`docker stop $(docker ps -aq --filter="name=${name}")`, {stdio: ['pipe', 'pipe', 'pipe']});
+        res = exec(`docker stop $(docker ps -aq --filter="name=${name}")`);
     } catch (e) {
-        console.log(e.stderr['toString']('utf8'));
         if (e.stderr['toString']('utf8').indexOf('requires at least 1 argument.') > 0) {
-            console.info('FOUND NOW', name);
             return;
         }
         
         throw new Error('Could not stop container: ' + name);
-    }
-    
-    if (res.indexOf('"docker stop" requires') !== -1) {
-        //
     }
 };
 
@@ -395,19 +389,13 @@ let rmContainer = (name) => {
     let res = '';
     
     try {
-        res = exec(`docker rm -v $(docker ps -aq --filter="name=${name}")`, {stdio: ['pipe', 'pipe', 'pipe']});
+        res = exec(`docker rm -v $(docker ps -aq --filter="name=${name}")`);
     } catch (e) {
-        console.log(e.stderr['toString']('utf8'));
         if (e.stderr['toString']('utf8').indexOf('requires at least 1 argument.') > 0) {
-            console.info('FOUND NOW', name);
             return;
         }
         
         throw new Error('Could not remove container: ' + name);
-    }
-    
-    if (res.indexOf('"docker rm" requires') !== -1) {
-        //
     }
 };
 
