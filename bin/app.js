@@ -271,5 +271,6 @@ yargs
 
 if (!commands[yargs.argv['_'][0]]) {
     yargs.showHelp('log');
-    process.exit();
+    console.log('Please enter a command.');
+    process.exit(1);
 }
