@@ -152,7 +152,10 @@ const commands = {
         
         builder: (yargs) => yargs,
         
-        handler: () => resolve(() => (new Installer()).leave())
+        handler: () => resolve(async () => {
+            await (new Hive()).stop();
+            await (new Installer()).leave();
+        })
     },
     reset: {
         command: 'reset',
