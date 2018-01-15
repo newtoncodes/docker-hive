@@ -91,7 +91,7 @@ iptablesCallback="${iptablesCallback}"
 `);
         chmod('/etc/docker-hive/hive.conf', 0o600);
     
-        try {exec('docker swarm leave --force');} catch (e) {}
+        try {exec('docker swarm leave --force', {stdio: [null, null, null]});} catch (e) {}
         exec('docker swarm init --advertise-addr ' + host);
         
         let gateway = await getGateway();
@@ -170,7 +170,7 @@ iptablesCallback="${iptablesCallback}"
             throw new Error('Cannot decrypt token. Check your credentials.');
         }
     
-        try {exec('docker swarm leave --force');} catch (e) {}
+        try {exec('docker swarm leave --force', {stdio: [null, null, null]});} catch (e) {}
         exec('docker swarm join --token "' + token + '" "' + host + ':2377"');
         
         let gateway = await getGateway();
