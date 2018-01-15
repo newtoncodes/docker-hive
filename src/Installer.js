@@ -39,6 +39,7 @@ class Installer {
     
     async init(host, iface) {
         if (!exists('/etc/docker-hive')) mkdir('/etc/docker-hive');
+        if (!exists('/etc/docker-hive/vpn')) mkdir('/etc/docker-hive/vpn');
         if (exists('/etc/docker-hive/env.conf')) throw new Error('Already in a swarm. Run hive leave first.');
     
         let config = {};
@@ -140,6 +141,7 @@ gateway=${gateway}
     
     async join (type, host, iface) {
         if (!exists('/etc/docker-hive')) mkdir('/etc/docker-hive');
+        if (!exists('/etc/docker-hive/vpn')) mkdir('/etc/docker-hive/vpn');
         if (exists('/etc/docker-hive/env.conf')) throw new Error('Already in a swarm. Run hive leave first.');
     
         let config = {};

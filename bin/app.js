@@ -137,7 +137,7 @@ const commands = {
     },
     join: {
         command: 'join [-t <type>] [-h <host>] [-i <interface>]',
-        description: 'Join a docker swarm (manager by hive).',
+        description: 'Join a docker swarm, managed by hive.',
         
         builder: (yargs) => yargs
             .positional('type', options.type)
@@ -159,7 +159,7 @@ const commands = {
     },
     reset: {
         command: 'reset',
-        description: 'Join to a docker swarm (manager by hive).',
+        description: 'Reset the hive stack volumes.',
         
         builder: (yargs) => yargs,
         

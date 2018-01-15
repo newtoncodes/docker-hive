@@ -1,6 +1,6 @@
 {
   "name": "docker-hive",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "description": "Preconfigured docker swarm. Portainer GUI. Built-in monitoring stack with prometheus and grafana.",
   "keywords": [
     "docker",
