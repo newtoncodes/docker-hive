@@ -205,21 +205,28 @@ class Hive {
         this._checkManagerWorker();
         
         let sync = async () => {
+            console.log('syncing');
+            console.log(this._config.iptablesCallback);
+            
             let rule = this.getIptables();
             let nodes = null;
             
             try {
                 nodes = await Utils.post(this._host, 4876, '/nodes', this._config.apiKey);
             } catch (e) {
-                return console.error('Sync error: Cannot connect to server.');
+                nodes = null;
             }
+            
+            if (!nodes) console.error('Sync error: Cannot connect to server.');
     
             try {
                 nodes = Utils.decrypt(nodes, this._config.apiSecret);
                 nodes = JSON.parse(nodes);
             } catch (e) {
-                return console.error('Sync error: Cannot parse server message.');
+                nodes = null;
             }
+    
+            if (!nodes) return console.error('Sync error: Cannot parse server message.');
     
             try {
                 saveNodes(nodes);
