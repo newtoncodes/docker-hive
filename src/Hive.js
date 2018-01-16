@@ -354,10 +354,16 @@ iptables -A INPUT -p tcp -i docker_gwbridge --dport 7946 -j ACCEPT
 iptables -A INPUT -p udp -i docker_gwbridge --dport 7946 -j ACCEPT
 iptables -A INPUT -p udp -i docker_gwbridge --dport 4789 -j ACCEPT
 
+iptables -A OUTPUT -p tcp --sport 2376 -j ACCEPT
+iptables -A OUTPUT -p tcp --sport 2377 -j ACCEPT
+iptables -A OUTPUT -p tcp --sport 7946 -j ACCEPT
+iptables -A OUTPUT -p udp --sport 7946 -j ACCEPT
+iptables -A OUTPUT -p udp --sport 4789 -j ACCEPT
+
 # Dockerd metrics
 
 iptables -A INPUT  -p tcp -i docker_gwbridge --dport 9323 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A OUTPUT -p tcp -i docker_gwbridge --sport 9323 -m state --state ESTABLISHED     -j ACCEPT
+iptables -A OUTPUT -p tcp --sport 9323 -j ACCEPT
 
 # Nodes
 `;
@@ -369,10 +375,17 @@ iptables -A INPUT  -p tcp -s "${ip}" -i ${iface} --dport 2377 -j ACCEPT
 iptables -A INPUT  -p tcp -s "${ip}" -i ${iface} --dport 7946 -j ACCEPT
 iptables -A INPUT  -p udp -s "${ip}" -i ${iface} --dport 7946 -j ACCEPT
 iptables -A INPUT  -p udp -s "${ip}" -i ${iface} --dport 4789 -j ACCEPT
+
+iptables -A OUTPUT -p tcp -d "${ip}" --sport 2376 -j ACCEPT
+iptables -A OUTPUT -p tcp -d "${ip}" --sport 2377 -j ACCEPT
+iptables -A OUTPUT -p tcp -d "${ip}" --sport 7946 -j ACCEPT
+iptables -A OUTPUT -p udp -d "${ip}" --sport 7946 -j ACCEPT
+iptables -A OUTPUT -p udp -d "${ip}" --sport 4789 -j ACCEPT
 `;
             
             if (this._type === 'master') {
                 rule += `iptables -A INPUT  -p tcp -s "${ip}" -i ${iface} --dport 4876 -j ACCEPT\n`;
+                rule += `iptables -A OUTPUT -p tcp -d "${ip}" --dport 4876 -j ACCEPT\n`;
             }
         }
     
