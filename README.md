@@ -98,7 +98,7 @@ curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -; sudo apt-get ins
 ## Install docker-hive
 
 ```bash
-npm install docker-hive
+npm install -g docker-hive
 hive --help # If the hive command is busy, use docker-hive
 ```
 
