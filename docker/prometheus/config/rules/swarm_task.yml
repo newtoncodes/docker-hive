@@ -44,7 +44,7 @@ groups:
       summary: "Memory hive task '{{ $labels.container_label_com_docker_swarm_task_name }}' on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
       description: "{{ $labels.container_label_com_docker_swarm_task_name }} on '{{ $labels.container_label_com_docker_swarm_node_id }}' memory usage is {{ humanize $value}}."
 
-  - alert: task_high_memory_usage_70
+  - alert: task_high_memory_usage_80
     expr: sum(rate(container_memory_rss{container_label_com_docker_swarm_task_name=~".+"}[1m])) by (container_label_com_docker_swarm_node_id) * 100 > 0
     for: 1m
     annotations:
