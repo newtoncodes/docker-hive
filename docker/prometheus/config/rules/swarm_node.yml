@@ -8,7 +8,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "CPU alert for Swarm node '{{ $labels.node_name }}'"
+      summary: "CPU hive node '{{ $labels.node_name }}'"
       description: "Swarm node {{ $labels.node_name }} CPU usage is at {{ humanize $value}}%."
 
   - alert: node_memory_usage
@@ -17,7 +17,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Memory alert for Swarm node '{{ $labels.node_name }}'"
+      summary: "Memory hive node '{{ $labels.node_name }}'"
       description: "Swarm node {{ $labels.node_name }} memory usage is at {{ humanize $value}}%."
 
   - alert: node_disk_usage
@@ -26,7 +26,7 @@ groups:
     labels:
       severity: warning
     annotations:
-      summary: "Disk alert for Swarm node '{{ $labels.node_name }}'"
+      summary: "Disk hive node '{{ $labels.node_name }}'"
       description: "Swarm node {{ $labels.node_name }} disk usage is at {{ humanize $value}}%."
 
   - alert: node_disk_fill_rate_6h
@@ -35,5 +35,5 @@ groups:
     labels:
       severity: critical
     annotations:
-      summary: "Disk fill alert for Swarm node '{{ $labels.node_name }}'"
+      summary: "Disk fill hive node '{{ $labels.node_name }}'"
       description: "Swarm node {{ $labels.node_name }} disk is going to fill up in 6h."

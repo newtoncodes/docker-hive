@@ -6,12 +6,19 @@ groups:
     expr: sum(rate(container_cpu_usage_seconds_total{container_label_com_docker_swarm_task_name=~".+"}[1m])) by (container_label_com_docker_swarm_task_name,container_label_com_docker_swarm_node_id) * 100 > 50
     for: 1m
     annotations:
-      summary: "CPU alert for Swarm task '{{ $labels.container_label_com_docker_swarm_task_name }}' on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
+      summary: "CPU hive task '{{ $labels.container_label_com_docker_swarm_task_name }}' on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
       description: "{{ $labels.container_label_com_docker_swarm_task_name }} on '{{ $labels.container_label_com_docker_swarm_node_id }}' CPU usage is at {{ humanize $value}}%."
 
-  - alert: task_high_memory_usage_1g
-    expr: sum(container_memory_rss{container_label_com_docker_swarm_task_name=~".+"}) by (container_label_com_docker_swarm_node_id) > 1000000000
+  - alert: task_high_memory_usage_2g
+    expr: sum(container_memory_rss{container_label_com_docker_swarm_task_name=~".+"}) by (container_label_com_docker_swarm_task_name,container_label_com_docker_swarm_node_id) > 2000000000
     for: 1m
     annotations:
-      summary: "Memory alert for Swarm task '{{ $labels.container_label_com_docker_swarm_task_name }}' on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
+      summary: "Memory hive task '{{ $labels.container_label_com_docker_swarm_task_name }}' on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
+      description: "{{ $labels.container_label_com_docker_swarm_task_name }} on '{{ $labels.container_label_com_docker_swarm_node_id }}' memory usage is {{ humanize $value}}."
+
+  - alert: task_high_memory_usage_50
+    expr: sum(container_memory_rss{container_label_com_docker_swarm_task_name=~".+"}) by (container_label_com_docker_swarm_task_name,container_label_com_docker_swarm_node_id) * 100 / node_memory_MemTotal > 10
+    for: 1m
+    annotations:
+      summary: "Memory hive task '{{ $labels.container_label_com_docker_swarm_task_name }}' on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
       description: "{{ $labels.container_label_com_docker_swarm_task_name }} on '{{ $labels.container_label_com_docker_swarm_node_id }}' memory usage is {{ humanize $value}}."
