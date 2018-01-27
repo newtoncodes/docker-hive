@@ -6,47 +6,33 @@ groups:
     expr: sum(rate(container_cpu_usage_seconds_total{container_label_com_docker_swarm_task_name=~".+"}[1m])) by (container_label_com_docker_swarm_task_name,container_label_com_docker_swarm_node_id) * 100 > 50
     for: 1m
     annotations:
-      summary: "CPU hive task '{{ $labels.container_label_com_docker_swarm_task_name }}' on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
-      description: "{{ $labels.container_label_com_docker_swarm_task_name }} on '{{ $labels.container_label_com_docker_swarm_node_id }}' CPU usage is at {{ humanize $value}}%."
-
-  - alert: task_high_memory_usage_2g
-    expr: sum(container_memory_rss{container_label_com_docker_swarm_task_name=~".+"}) by (container_label_com_docker_swarm_task_name,container_label_com_docker_swarm_node_id) > 2000000000
-    for: 1m
-    annotations:
-      summary: "Memory hive task '{{ $labels.container_label_com_docker_swarm_task_name }}' on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
-      description: "{{ $labels.container_label_com_docker_swarm_task_name }} on '{{ $labels.container_label_com_docker_swarm_node_id }}' memory usage is {{ humanize $value}}."
-
-  - alert: task_high_memory_usage_3g
-    expr: sum(container_memory_rss{container_label_com_docker_swarm_task_name=~".+"}) by (container_label_com_docker_swarm_node_id) > 2000000000
-    for: 1m
-    annotations:
-      summary: "Memory hive task '{{ $labels.container_label_com_docker_swarm_task_name }}' on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
-      description: "{{ $labels.container_label_com_docker_swarm_task_name }} on '{{ $labels.container_label_com_docker_swarm_node_id }}' memory usage is {{ humanize $value}}."
-
-  - alert: task_high_memory_usage_50
-    expr: sum(container_memory_rss{container_label_com_docker_swarm_task_name=~".+"}) by (container_label_com_docker_swarm_task_name,container_label_com_docker_swarm_node_id) * 100 / node_memory_MemTotal > 0
-    for: 1m
-    annotations:
-      summary: "Memory hive task '{{ $labels.container_label_com_docker_swarm_task_name }}' on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
-      description: "{{ $labels.container_label_com_docker_swarm_task_name }} on '{{ $labels.container_label_com_docker_swarm_node_id }}' memory usage is {{ humanize $value}}."
-
-  - alert: task_high_memory_usage_51
-    expr: sum(container_memory_rss{container_label_com_docker_swarm_task_name=~".+"}) by (container_label_com_docker_swarm_node_id) * 100 / node_memory_MemTotal > 0
-    for: 1m
-    annotations:
-      summary: "Memory hive task '{{ $labels.container_label_com_docker_swarm_task_name }}' on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
-      description: "{{ $labels.container_label_com_docker_swarm_task_name }} on '{{ $labels.container_label_com_docker_swarm_node_id }}' memory usage is {{ humanize $value}}."
+      summary: "CPU hive task on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
+      description: "Usage of {{ $labels.container_label_com_docker_swarm_task_name }} is at {{ humanize $value}}%."
 
   - alert: task_high_memory_usage_70
     expr: sum(rate(container_memory_rss{container_label_com_docker_swarm_task_name=~".+"}[1m])) by (container_label_com_docker_swarm_task_name,container_label_com_docker_swarm_node_id) * 100 > 0
     for: 1m
     annotations:
-      summary: "Memory hive task '{{ $labels.container_label_com_docker_swarm_task_name }}' on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
-      description: "{{ $labels.container_label_com_docker_swarm_task_name }} on '{{ $labels.container_label_com_docker_swarm_node_id }}' memory usage is {{ humanize $value}}."
+      summary: "Memory hive task on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
+      description: "Usage of {{ $labels.container_label_com_docker_swarm_task_name }} is {{ humanize $value}}% {{ $value }}."
 
-  - alert: task_high_memory_usage_80
-    expr: sum(rate(container_memory_rss{container_label_com_docker_swarm_task_name=~".+"}[1m])) by (container_label_com_docker_swarm_node_id) * 100 > 0
+  - alert: task_high_memory_usage_71
+    expr: rate(container_memory_rss{container_label_com_docker_swarm_task_name=~".+"}[1m]) by (container_label_com_docker_swarm_task_name,container_label_com_docker_swarm_node_id) * 100 > 0
     for: 1m
     annotations:
-      summary: "Memory hive task '{{ $labels.container_label_com_docker_swarm_task_name }}' on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
-      description: "{{ $labels.container_label_com_docker_swarm_task_name }} on '{{ $labels.container_label_com_docker_swarm_node_id }}' memory usage is {{ humanize $value}}."
+      summary: "Memory hive task on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
+      description: "Usage of {{ $labels.container_label_com_docker_swarm_task_name }} is {{ humanize $value}}% {{ $value }}."
+
+  - alert: task_high_memory_usage_72
+    expr: sum(rate(container_memory_rss{container_label_com_docker_swarm_task_name=~".+"})) by (container_label_com_docker_swarm_task_name,container_label_com_docker_swarm_node_id) * 100 > 0
+    for: 1m
+    annotations:
+      summary: "Memory hive task on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
+      description: "Usage of {{ $labels.container_label_com_docker_swarm_task_name }} is {{ humanize $value}}% {{ $value }}."
+
+  - alert: task_high_memory_usage_73
+    expr: rate(container_memory_rss{container_label_com_docker_swarm_task_name=~".+"}) by (container_label_com_docker_swarm_task_name,container_label_com_docker_swarm_node_id) * 100 > 0
+    for: 1m
+    annotations:
+      summary: "Memory hive task on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
+      description: "Usage of {{ $labels.container_label_com_docker_swarm_task_name }} is {{ humanize $value}}% {{ $value }}."
