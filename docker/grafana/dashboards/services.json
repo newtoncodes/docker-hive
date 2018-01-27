@@ -3,7 +3,8 @@
     "annotations": {
       "list": []
     },
-    "description": "Docker Swarm stacks and services metrics",
+    "title": "Hive services",
+    "description": "Hive stacks and services metrics",
     "editable": true,
     "gnetId": null,
     "graphTooltip": 0,
@@ -1865,7 +1866,6 @@
       ]
     },
     "timezone": "",
-    "title": "Docker Swarm Services",
     "version": 16
   },
   "overwrite" : false

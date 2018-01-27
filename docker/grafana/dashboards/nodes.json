@@ -3,7 +3,8 @@
     "annotations": {
       "list": []
     },
-    "description": "Docker Swarm nodes metrics",
+    "title": "Hive nodes",
+    "description": "Hive nodes metrics",
     "editable": true,
     "gnetId": null,
     "graphTooltip": 0,
@@ -1684,7 +1685,6 @@
       ]
     },
     "timezone": "",
-    "title": "Docker Swarm Nodes",
     "version": 15
   },
   "overwrite" : false

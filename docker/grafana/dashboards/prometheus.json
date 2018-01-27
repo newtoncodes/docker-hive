@@ -3,6 +3,8 @@
     "annotations": {
       "list": []
     },
+    "title": "Prometheus",
+    "description": "Prometheus metrics",
     "editable": true,
     "gnetId": null,
     "graphTooltip": 1,
@@ -1168,7 +1170,6 @@
       ]
     },
     "timezone": "",
-    "title": "Prometheus",
     "version": 5
   },
   "overwrite" : false
