@@ -7,6 +7,8 @@ volumes:
         external: true
     hive_prometheus:
         external: true
+    hive_prometheus_rules:
+        external: true
     hive_grafana:
         external: true
     hive_grafana_log:
@@ -113,6 +115,7 @@ services:
             - hive
         volumes:
             - hive_prometheus:/prometheus
+            - hive_prometheus_rules:/etc/prometheus/rules
         deploy:
             mode: replicated
             replicas: 1

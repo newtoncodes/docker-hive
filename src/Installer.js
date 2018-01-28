@@ -105,6 +105,7 @@ iptablesCallback="${iptablesCallback}"
     
         rmVolume('hive_portainer');
         rmVolume('hive_prometheus');
+        rmVolume('hive_prometheus_rules');
         rmVolume('hive_alertmanager');
         rmVolume('hive_grafana');
         rmVolume('hive_grafana_log');
@@ -116,6 +117,7 @@ iptablesCallback="${iptablesCallback}"
         
         createVolume('hive_portainer');
         createVolume('hive_prometheus');
+        createVolume('hive_prometheus_rules');
         createVolume('hive_alertmanager');
         createVolume('hive_grafana');
         createVolume('hive_grafana_log');
@@ -222,6 +224,7 @@ gateway=${gateway}
         if (this._type === 'master') {
             rmVolume('hive_portainer');
             rmVolume('hive_prometheus');
+            rmVolume('hive_prometheus_rules');
             rmVolume('hive_alertmanager');
             rmVolume('hive_grafana');
             rmVolume('hive_grafana_log');
@@ -246,6 +249,7 @@ gateway=${gateway}
         
         rmVolume('hive_portainer');
         rmVolume('hive_prometheus');
+        rmVolume('hive_prometheus_rules');
         rmVolume('hive_alertmanager');
         rmVolume('hive_grafana');
         rmVolume('hive_grafana_log');
@@ -253,6 +257,7 @@ gateway=${gateway}
         
         createVolume('hive_portainer');
         createVolume('hive_prometheus');
+        createVolume('hive_prometheus_rules');
         createVolume('hive_alertmanager');
         createVolume('hive_grafana');
         createVolume('hive_grafana_log');

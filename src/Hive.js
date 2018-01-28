@@ -150,6 +150,7 @@ class Hive {
     
         rmContainer('hive_portainer');
         rmContainer('hive_prometheus');
+        rmContainer('hive_prometheus_rules');
         rmContainer('hive_alertmanager');
         rmContainer('hive_export-cadvisor');
         rmContainer('hive_export-dockerd');
