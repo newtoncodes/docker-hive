@@ -1684,8 +1684,8 @@
         "30d"
       ]
     },
-    "timezone": "",
-    "version": 15
+    "timezone": "browser",
+    "version": 16
   },
   "overwrite" : false
 }
