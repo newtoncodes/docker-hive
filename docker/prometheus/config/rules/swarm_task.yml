@@ -9,8 +9,8 @@ groups:
       summary: "CPU hive task on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
       description: "Usage {{ humanize $value}}% on '{{ $labels.container_label_com_docker_swarm_task_name }}'."
 
-  - alert: task_high_memory_usage_4g
-    expr: sum(container_memory_usage_bytes{container_label_com_docker_swarm_task_name=~".+"}) by (container_label_com_docker_swarm_task_name,container_label_com_docker_swarm_node_id) > 4 * 1024 * 1024 * 1024
+  - alert: task_high_memory_usage_5g
+    expr: sum(container_memory_rss{container_label_com_docker_swarm_task_name=~".+"}) by (container_label_com_docker_swarm_task_name,container_label_com_docker_swarm_node_id) > 5 * 1024 * 1024 * 1024
     for: 1m
     annotations:
       summary: "Memory hive task on '{{ $labels.container_label_com_docker_swarm_node_id }}'"
