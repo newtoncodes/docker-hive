@@ -9,7 +9,7 @@ groups:
       severity: warning
     annotations:
       summary: "CPU hive node '{{ $labels.node_name }}'"
-      description: "Usage is at {{ humanize $value}}%."
+      description: "Usage is {{ humanize $value}}%."
 
   - alert: node_memory_usage
     expr: sum(((node_memory_MemTotal - node_memory_MemAvailable) / node_memory_MemTotal) * on(instance) group_left(node_name) node_meta * 100) by (node_name) > 80
@@ -18,7 +18,7 @@ groups:
       severity: warning
     annotations:
       summary: "Memory hive node '{{ $labels.node_name }}'"
-      description: "Usage is at {{ humanize $value}}%."
+      description: "Usage is {{ humanize $value}}%."
 
   - alert: node_disk_usage
     expr: ((node_filesystem_size{mountpoint="/"} - node_filesystem_free{mountpoint="/"}) * 100 / node_filesystem_size{mountpoint="/"}) * on(instance) group_left(node_name) node_meta > 85
@@ -27,7 +27,7 @@ groups:
       severity: warning
     annotations:
       summary: "Disk hive node '{{ $labels.node_name }}'"
-      description: "Usage is at {{ humanize $value}}%."
+      description: "Usage is {{ humanize $value}}%."
 
   - alert: node_disk_fill_rate_6h
     expr: predict_linear(node_filesystem_free{mountpoint="/"}[1h], 6*3600) * on(instance) group_left(node_name) node_meta < 0
