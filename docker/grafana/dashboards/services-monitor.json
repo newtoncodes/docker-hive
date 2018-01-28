@@ -1,15 +1,22 @@
 {
   "dashboard": {
-    "id": null,
+    "annotations": {
+      "list": []
+    },
     "title": "Hive services monitor",
     "description": "Hive secondary services metrics",
+    "editable": true,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "hideControls": false,
+    "id": null,
+    "links": [],
+    "refresh": "30s",
     "tags": [
       "prometheus"
     ],
     "style": "dark",
     "timezone": "browser",
-    "editable": true,
-    "hideControls": false,
     "sharedCrosshair": true,
     "rows": [
       {
@@ -1293,13 +1300,8 @@
     "templating": {
       "list": []
     },
-    "annotations": {
-      "list": []
-    },
-    "refresh": "10s",
     "schemaVersion": 12,
-    "version": 22,
-    "links": [],
-    "gnetId": null
-  }
+    "version": 23
+  },
+  "overwrite": false
 }
